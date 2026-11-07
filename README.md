@@ -1,3 +1,13 @@
+<img width="2560" height="1408" alt="Capture d’écran du 2026-11-07 16-31-54" src="https://github.com/user-attachments/assets/8cf45a5f-d844-47f7-832e-ac5c1aaa9689" />
+<img width="2560" height="1408" alt="Capture d’écran du 2026-11-07 16-32-06" src="https://github.com/user-attachments/assets/2798676c-43fd-42e6-a7a4-1fffe489c797" />
+<img width="2560" height="1408" alt="Capture d’écran du 2026-11-07 16-32-01" src="https://github.com/user-attachments/assets/96a32db6-9669-4d6a-a9ee-c891a9d79b6f" />
+<img width="2560" height="1408" alt="Capture d’écran du 2026-11-07 16-32-06" src="https://github.com/user-attachments/assets/7881e5ec-5252-42de-be7b-129e65c6227a" />
+<img width="2560" height="1408" alt="Capture d’écran du 2026-11-07 16-32-16" src="https://github.com/user-attachments/assets/cc130b79-324c-4589-9ac7-721fc2486ef4" />
+<img width="2560" height="1408" alt="Capture d’écran du 2026-11-07 16-32-33" src="https://github.com/user-attachments/assets/003b42f4-3c74-4e0c-a640-334477d64c94" />
+<img width="2560" height="1408" alt="Capture d’écran du 2026-11-07 16-32-40" src="https://github.com/user-attachments/assets/5ede61f7-a06c-441b-ab04-613e69a01942" />
+<img width="2560" height="1408" alt="Capture d’écran du 2026-11-07 16-33-11" src="https://github.com/user-attachments/assets/b0dbf929-5a98-48a7-a0de-9f7b4a96d735" />
+
+
 # GameShift
 
 **Surveillance matérielle, benchmarks et profils GPU sous Linux.**
