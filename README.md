@@ -26,7 +26,7 @@ Les mesures restent locales. Aucun compte ni envoi automatique de données.
 
 ## Téléchargement et lancement
 
-Télécharger l’[AppImage x86_64 et son SHA-256](releases/0.5.0-alpha.2/), puis
+Télécharger l’[AppImage x86_64 et son SHA-256](https://github.com/getsugah/gameshift/releases/tag/v0.5.0-alpha.2), puis
 exécuter ces commandes dans le dossier de téléchargement :
 
 ```sh
