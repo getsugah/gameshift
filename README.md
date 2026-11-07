@@ -1,32 +1,33 @@
 # GameShift
 
-**Un cockpit hardware pour Linux.**
+**Surveillance matérielle, benchmarks et profils GPU sous Linux.**
 
-Garde un œil sur ton CPU et tes GPU, lance un bench, compare tes runs et ajuste
-les réglages disponibles sur ta Radeon. GameShift rassemble tout ça dans une
-interface GTK4, avec **Aurelia** pour les tests de performance.
+GameShift rassemble le suivi du CPU et des GPU dans une interface GTK4.
+Son moteur de benchmark, **Aurelia**, permet de mesurer les performances et de
+comparer les résultats. Des profils permettent également de gérer les réglages
+pris en charge par les cartes AMD Radeon.
 
-Version actuelle : **0.5.0-alpha.2**. Ça tourne, ça mesure, mais ça reste une alpha.
+Version actuelle : **0.5.0-alpha.2**, expérimentale.
 
-## Au menu
+## Fonctionnalités
 
-- **Monitoring CPU/GPU** : fréquences, températures, charge et mémoire, selon
-  les capteurs accessibles.
-- **Processus GPU** : voir quelles applis utilisent la carte et suivre les
-  compteurs que le pilote expose.
-- **Aurelia** : benches CPU, système et scène Vulkan, avec historique et
+- **Monitoring CPU/GPU** : fréquences, températures, utilisation et mémoire,
+  selon les capteurs accessibles.
+- **Processus GPU** : affichage des applications utilisant la carte et suivi
+  des compteurs exposés par le pilote.
+- **Aurelia** : benchmarks CPU, système et scène Vulkan, avec historique et
   comparaison des résultats à protocole identique.
-- **Profils Radeon** : enregistrer ses réglages, les associer à des applis et
-  basculer depuis l’icône de notification.
-- **Quitter GameShift** depuis cette icône ferme la fenêtre et arrête aussi
-  l’agent en arrière-plan. Tes profils restent enregistrés.
+- **Profils Radeon** : enregistrement des réglages, association à des applications
+  et sélection depuis l’icône de notification.
+- **Quitter GameShift** : fermeture de la fenêtre et arrêt de l’agent depuis
+  l’icône de notification, avec conservation des profils enregistrés.
 
-Les mesures restent en local. Pas de compte à créer, pas d’envoi automatique.
+Les mesures restent locales. Aucun compte ni envoi automatique de données.
 
-## Lancer la bête
+## Téléchargement et lancement
 
-Récupère l’[AppImage x86_64 et son SHA-256](releases/0.5.0-alpha.2/), puis dans
-le dossier de téléchargement :
+Télécharger l’[AppImage x86_64 et son SHA-256](releases/0.5.0-alpha.2/), puis
+exécuter ces commandes dans le dossier de téléchargement :
 
 ```sh
 sha256sum -c GameShift-0.5.0-alpha.2-x86_64.AppImage.sha256
@@ -34,32 +35,33 @@ chmod +x GameShift-0.5.0-alpha.2-x86_64.AppImage
 ./GameShift-0.5.0-alpha.2-x86_64.AppImage
 ```
 
-Il faut **glibc ≥ 2.41**, tes pilotes graphiques et **Vulkan** pour le bench GPU.
-Lance l’appli avec ton compte habituel, sans `sudo`.
+L’AppImage nécessite **glibc ≥ 2.41**, des pilotes graphiques fonctionnels et
+**Vulkan** pour le benchmark GPU. L’application se lance avec un compte utilisateur
+habituel, sans `sudo`.
 
-Le monitoring et les benches fonctionnent sans le composant de contrôle Radeon.
-Pour toucher aux réglages AMD, active ce composant depuis l’appli. Si tu l’avais
-déjà installé, utilise **Mettre à jour les contrôles GPU** pour récupérer l’agent
-avec le nouveau menu Quitter.
+Le monitoring et les benchmarks fonctionnent sans le composant de contrôle Radeon.
+Les réglages AMD nécessitent son activation depuis l’application. Si une version
+précédente est déjà installée, **Mettre à jour les contrôles GPU** permet d’obtenir
+l’agent avec le nouveau menu Quitter.
 
-## Encore en rodage
+## État de l’alpha
 
 Les capteurs et réglages disponibles dépendent du matériel et du pilote. La prise
-en charge des différentes cartes reste à valider sur matériel réel ; le suivi des
+en charge des différentes cartes reste à valider sur matériel réel. Le suivi des
 processus avec le pilote propriétaire NVIDIA n’est pas implémenté.
 
-Les détails techniques sont dans le [guide de l’alpha](docs/ALPHA.md).
+Les détails techniques figurent dans le [guide de l’alpha](docs/ALPHA.md).
 
-## À toi de bidouiller
+## Sources et licence
 
-Projet perso, distribué tel quel : **aucun support, aucune maintenance ni ajout
-prévu**. Les demandes d’aide, de correction ou d’évolution et les contributions
-externes ne sont pas prises en charge. Le logiciel est fourni **sans garantie**.
+GameShift est un projet personnel distribué tel quel, **sans garantie**.
+**Aucun support, aucune maintenance ni ajout de fonctionnalités n’est prévu.**
+Les demandes d’aide, de correction ou d’évolution et les contributions externes
+ne sont pas prises en charge.
 
-Envie de reprendre le code, de le modifier ou de faire ton propre fork ? Les
-sources sont disponibles sous **GPL-3.0-or-later** : garde les mentions des auteurs
-et respecte les conditions de [LICENSE](LICENSE). Les composants tiers gardent
-[leurs propres licences](docs/THIRD_PARTY.md).
+Les sources sont disponibles sous **GPL-3.0-or-later**. Elles peuvent être étudiées,
+modifiées et redistribuées dans le respect de [LICENSE](LICENSE) et des mentions
+des auteurs. Les composants tiers conservent [leurs propres licences](docs/THIRD_PARTY.md).
 
-Sous le capot : Rust, GTK4/libadwaita et Vulkan.
-Pour compiler toi-même, direction le [guide de build](docs/PUBLIC_BUILD.md).
+Le projet utilise Rust, GTK4/libadwaita et Vulkan. Les instructions de compilation
+se trouvent dans le [guide de compilation](docs/PUBLIC_BUILD.md).
