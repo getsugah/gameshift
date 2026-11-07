@@ -10,7 +10,7 @@
     "Cargo.toml": "4728a7f80a87b34d4208c3724ab3072a1f362f4a1ff9d543d59dcffd0ad9d769",
     "DEPENDENCIES.md": "c3b8b0c8f25da6132e686b82a95262728951987afefbd94465b6d551e6a91753",
     "LICENSE": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
-    "README.md": "e84acce23fe74cdeb478331a78a1678aedf5b33570344a69fd00e4f7d15e8394",
+    "README.md": "b4240ba8063a5394de401eee68f1087ffac94ac8646649f48620e6b8214f2a80",
     "crates/aurelia-host-bench/Cargo.toml": "a7f2211fc190632c6c8c2ca06b5e56e8ec693720db330d110c76a0581d4d47b9",
     "crates/aurelia-host-bench/src/applications.rs": "b114d6a95ad9658143c93d7487b4a897069068a737a5d02ec7dc51fb2d313f8e",
     "crates/aurelia-host-bench/src/main.rs": "cd98a804a82add01d213793c8bb5511b2afac9128d07b7dd4f6ba3d47b31f12b",
