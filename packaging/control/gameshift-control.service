@@ -1,0 +1,19 @@
+[Unit]
+Description=GameShift validated GPU controller
+Requires=gameshift-control.socket
+After=gameshift-control.socket
+[Service]
+ExecStart=/usr/libexec/gameshift-control --daemon
+Restart=on-failure
+RestartSec=3
+RuntimeDirectory=gameshift-control
+RuntimeDirectoryMode=0700
+RuntimeDirectoryPreserve=yes
+LogsDirectory=gameshift-control
+LogsDirectoryMode=0700
+NoNewPrivileges=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/sys /run/gameshift-control /var/log/gameshift-control
+PrivateTmp=true
+TimeoutStopSec=12

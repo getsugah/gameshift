@@ -1,0 +1,25 @@
+#!/bin/sh
+set -eu
+APPDIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+export APPDIR
+# Application-library measurements must start with the host loader environment.
+case "${1:-}" in
+    --host-bench|--system-bench)
+        mode=$1
+        shift
+        unset LD_LIBRARY_PATH LD_PRELOAD LD_AUDIT
+        if [ "$mode" = --host-bench ]; then
+            exec "$APPDIR/usr/bin/aurelia-host-bench" "$@"
+        fi
+        exec "$APPDIR/usr/bin/gameshift-system-bench" "$@"
+        ;;
+esac
+export LD_LIBRARY_PATH="$APPDIR/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export XDG_DATA_DIRS="$APPDIR/usr/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+export GSETTINGS_SCHEMA_DIR="$APPDIR/usr/share/glib-2.0/schemas"
+if [ "${1:-}" = --profiles ]; then
+    shift
+    exec "$APPDIR/usr/bin/gameshift-profiles" "$@"
+fi
+# Host graphics loader/ICDs and their configuration remain under host control.
+exec "$APPDIR/usr/bin/gameshift-gui" "$@"

@@ -1,0 +1,15 @@
+{
+  "scene_version": "aurelia-raster-v3-msaa",
+  "protocol": "legacy-time-window-v1",
+  "result_schema_version": 2,
+  "files": {
+    "crates/gameshift-bench/src/renderer.rs": "6c147a3c08334c1e03487c956953cafda18fe2e803202e908130fd1e9ebb412c",
+    "crates/gameshift-bench/src/runner.rs": "ec899752cef45db676a6f8aa5c7a301717fd207219fcb69914f05202a32bad7a",
+    "crates/gameshift-bench/src/protocol.rs": "bceb3fec12d21bbc59e8d67ba0c06b978f5ebd93bc78b2af79856b9656abdc4a",
+    "crates/gameshift-bench/src/statistics.rs": "e85bfd8b5a68cb1e281073d7cbe59c56cadb3070cfbac356c1f7a47a40d70f6e",
+    "shaders/city.vert": "fab88c79ab8dd49fa880c51875711b3c4ff17af4966d7e2eaeb84618709527d8",
+    "shaders/city.frag": "e72a51b7f26a5f2a6e3e7a72cbe0f42f7498c3326f86ff512f2fbb6bfc5a9b6d",
+    "shaders/sky.vert": "bad10b5290cc6f6d713c1a78ab1b0fe822c1d81c7747795a3e2ea242ac57aa38",
+    "shaders/sky.frag": "11058e89b71bedaec9241b807f677454b67e7962fa85484409a959a818ddfd1f"
+  }
+}

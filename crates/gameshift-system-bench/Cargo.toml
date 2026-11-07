@@ -1,0 +1,17 @@
+[package]
+name = "gameshift-system-bench"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+gameshift-control = { path = "../gameshift-control" }
+gameshift-cpu.workspace = true
+gameshift-core.workspace = true
+gameshift-distro.workspace = true
+gameshift-bench.workspace = true
+gameshift-telemetry.workspace = true
+rayon = "1.11"
+libc = "0.2"
+serde.workspace = true
+serde_json.workspace = true

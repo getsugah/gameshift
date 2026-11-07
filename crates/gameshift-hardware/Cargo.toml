@@ -1,0 +1,10 @@
+[package]
+name = "gameshift-hardware"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+gameshift-core.workspace = true
+gameshift-distro.workspace = true
+tracing.workspace = true

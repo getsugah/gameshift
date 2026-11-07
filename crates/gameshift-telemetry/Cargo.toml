@@ -1,0 +1,9 @@
+[package]
+name = "gameshift-telemetry"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+gameshift-control = { path = "../gameshift-control" }
+serde.workspace = true

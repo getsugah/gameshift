@@ -1,0 +1,8 @@
+[Unit]
+Description=GameShift GPU control socket
+[Socket]
+ListenStream=/run/gameshift-control-manager.sock
+SocketMode=0666
+RemoveOnStop=true
+[Install]
+WantedBy=sockets.target

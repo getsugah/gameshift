@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=GameShift
+Comment=Diagnostic matériel et laboratoire de performances Linux
+Exec=gameshift-gui
+Icon=gameshift
+Terminal=false
+Categories=System;
+StartupNotify=true

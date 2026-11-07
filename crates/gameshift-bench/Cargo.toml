@@ -1,0 +1,19 @@
+[package]
+name = "gameshift-bench"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+gameshift-control = { path = "../gameshift-control" }
+gameshift-core.workspace = true
+gameshift-telemetry.workspace = true
+ash = "0.38"
+serde.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+winit = "0.30"
+ash-window = "0.13"
+raw-window-handle = "0.6"
+glam = "0.30"
+gpu-allocator = { version = "0.28", default-features = false, features = ["std", "vulkan"] }

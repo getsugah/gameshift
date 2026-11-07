@@ -1,0 +1,9 @@
+#!/bin/sh
+# Runtime library directories must not contain the build sysroot.
+# Compilation flags continue to use the configured target sysroot.
+for argument in "$@"; do
+    if [ "$argument" = "--variable=libdir" ]; then
+        PKG_CONFIG_SYSROOT_DIR=/ exec /usr/bin/pkg-config "$@"
+    fi
+done
+exec /usr/bin/pkg-config "$@"

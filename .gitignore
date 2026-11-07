@@ -1,0 +1,13 @@
+/target/
+/exports/
+
+/dist/
+/packaging/__pycache__/
+
+# Personal credentials/configuration are never release inputs.
+.env
+.env.*
+*.pem
+*.key
+id_rsa
+id_ed25519

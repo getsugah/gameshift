@@ -1,0 +1,19 @@
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.5.0-alpha.2"
+edition = "2021"
+license = "GPL-3.0-or-later"
+
+[workspace.dependencies]
+gameshift-cpu = { path = "crates/gameshift-cpu" }
+gameshift-telemetry = { path = "crates/gameshift-telemetry" }
+gameshift-bench = { path = "crates/gameshift-bench" }
+gameshift-core = { path = "crates/gameshift-core" }
+gameshift-distro = { path = "crates/gameshift-distro" }
+gameshift-hardware = { path = "crates/gameshift-hardware" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tracing = "0.1"

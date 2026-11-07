@@ -1,0 +1,20 @@
+{
+  "version": "0.5.0-alpha.2",
+  "distribution_name_scan": "passed: source names and contents, all extracted AppImage files and command output",
+  "private_path_scan": "passed",
+  "source_files": 142,
+  "artifact_checksums": "passed",
+  "binary_and_library_hashes": "passed",
+  "profile_unit_tests_passed": 15,
+  "isolated_dbus_tray_quit_test": "passed",
+  "read_only_smoke_checks": [
+    "--diagnose-json",
+    "--controls-json",
+    "--community-diagnostic-json",
+    "--system-bench --plan",
+    "--profiles --version"
+  ],
+  "hardware_validated": false,
+  "git_history_exported": false,
+  "packaged_agent_tray_quit_test": "passed: menu action exits cleanly and removes socket"
+}

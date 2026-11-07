@@ -1,0 +1,11 @@
+[package]
+name = "gameshift-profiles"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+[dependencies]
+gameshift-control = { path = "../gameshift-control" }
+serde.workspace = true
+serde_json.workspace = true
+libc = "0.2"
+gio = "0.22"

@@ -1,0 +1,667 @@
+[
+  {
+    "library": "libLerc.so.4",
+    "binary_package": "liblerc4",
+    "version": "4.0.0+ds-5",
+    "sha256": "b04bc6a13a8cda1d3f60b7e8b9b69e38f8a998b3364705168510285c29719bee",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/liblerc4/4.0.0%2Bds-5/"
+  },
+  {
+    "library": "libX11.so.6",
+    "binary_package": "libx11-6",
+    "version": "2:1.8.12-1",
+    "sha256": "b03e563b316b8b53c7988f0ee91d6656cc425538e00947a8b14482d179e80099",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libx11-6/2%3A1.8.12-1/"
+  },
+  {
+    "library": "libXau.so.6",
+    "binary_package": "libxau6",
+    "version": "1:1.0.11-1",
+    "sha256": "4275ec5b14bec21770c44447b3a52977e211c7ba08745008f3a1783878e091bb",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libxau6/1%3A1.0.11-1/"
+  },
+  {
+    "library": "libXcursor.so.1",
+    "binary_package": "libxcursor1",
+    "version": "1:1.2.3-1",
+    "sha256": "0a860c0162ffa5b37d88d2075d143e4e24295416fe85bb868e2daff07d2732fd",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libxcursor1/1%3A1.2.3-1/"
+  },
+  {
+    "library": "libXdamage.so.1",
+    "binary_package": "libxdamage1",
+    "version": "1:1.1.6-1+b2",
+    "sha256": "e87b12f4208b53769802abfa4052147ffcc5f0f7d76d8bcd677126a593cc70fb",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libxdamage1/1%3A1.1.6-1%2Bb2/"
+  },
+  {
+    "library": "libXdmcp.so.6",
+    "binary_package": "libxdmcp6",
+    "version": "1:1.1.5-1",
+    "sha256": "761409b24c818719f8c8a2a64a61c8ac6a3067f3d8882485dca64a98d7500040",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libxdmcp6/1%3A1.1.5-1/"
+  },
+  {
+    "library": "libXext.so.6",
+    "binary_package": "libxext6",
+    "version": "2:1.3.4-1+b3",
+    "sha256": "74cef58f0855cbbe23fce87566249f717e5c8ebeceee09efee393616a9b17697",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libxext6/2%3A1.3.4-1%2Bb3/"
+  },
+  {
+    "library": "libXfixes.so.3",
+    "binary_package": "libxfixes3",
+    "version": "1:6.0.0-2+b4",
+    "sha256": "85e29f4739a349d94d61db7a696f764d21dfe5c8db6ba7444af21416a0339187",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libxfixes3/1%3A6.0.0-2%2Bb4/"
+  },
+  {
+    "library": "libXi.so.6",
+    "binary_package": "libxi6",
+    "version": "2:1.8.2-1",
+    "sha256": "8ca60a4e6a90bba494e601e03e792b2d440cced9985deca64431abbd78613adb",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libxi6/2%3A1.8.2-1/"
+  },
+  {
+    "library": "libXinerama.so.1",
+    "binary_package": "libxinerama1",
+    "version": "2:1.1.4-3+b4",
+    "sha256": "d09736be08221c8040cab2b0d407a6b8197d3e337f9b81d9b48515e9e02b09b0",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libxinerama1/2%3A1.1.4-3%2Bb4/"
+  },
+  {
+    "library": "libXrandr.so.2",
+    "binary_package": "libxrandr2",
+    "version": "2:1.5.4-1+b3",
+    "sha256": "c99f3f78690b66428f91b5d66fa8531bcce8166e2324d34c911b61206b11ff52",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libxrandr2/2%3A1.5.4-1%2Bb3/"
+  },
+  {
+    "library": "libXrender.so.1",
+    "binary_package": "libxrender1",
+    "version": "1:0.9.12-1",
+    "sha256": "39fed75f787ac251cba86e30ccd979e3df1f84dd73c63a75eeb86a18fd413e64",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libxrender1/1%3A0.9.12-1/"
+  },
+  {
+    "library": "libadwaita-1.so.0",
+    "binary_package": "libadwaita-1-0",
+    "version": "1.7.6-1~deb13u1",
+    "sha256": "48964544c5f456ec6189b306a168e7accaa5b2b853d17fe1b7274587c709bbe6",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libadwaita-1-0/1.7.6-1~deb13u1/"
+  },
+  {
+    "library": "libappstream.so.5",
+    "binary_package": "libappstream5",
+    "version": "1.0.5-1",
+    "sha256": "cd24ef739f75af450298852604c5f9301867f7ef1f8d877062900e188f074f8f",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libappstream5/1.0.5-1/"
+  },
+  {
+    "library": "libatomic.so.1",
+    "binary_package": "libatomic1",
+    "version": "14.2.0-19",
+    "sha256": "9558489f171274c220104894258f483055853ed8a23d4ff754c850ce55765aa2",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libatomic1/14.2.0-19/"
+  },
+  {
+    "library": "libblkid.so.1",
+    "binary_package": "libblkid1",
+    "version": "2.41.5-0+deb13u1",
+    "sha256": "116b712c143ac68bb59f6d8e32ed8e05e0772c730a9ba55ec544dd28916af58c",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libblkid1/2.41.5-0%2Bdeb13u1/"
+  },
+  {
+    "library": "libbrotlicommon.so.1",
+    "binary_package": "libbrotli1",
+    "version": "1.1.0-2+deb13u1",
+    "sha256": "0697dd09666e2a080974470950075ee959f2391ecb173ceee50423f969032d79",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libbrotli1/1.1.0-2%2Bdeb13u1/"
+  },
+  {
+    "library": "libbrotlidec.so.1",
+    "binary_package": "libbrotli1",
+    "version": "1.1.0-2+deb13u1",
+    "sha256": "ff4baf3141862726c25ab08cdd94bced37dcae0c6827943d3e40fc1079969814",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libbrotli1/1.1.0-2%2Bdeb13u1/"
+  },
+  {
+    "library": "libbz2.so.1.0",
+    "binary_package": "libbz2-1.0",
+    "version": "1.0.8-6",
+    "sha256": "c630f057efedc12f848710d71f40283895591e5b4608539f387895c64e0553da",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libbz2-1.0/1.0.8-6/"
+  },
+  {
+    "library": "libcairo-gobject.so.2",
+    "binary_package": "libcairo-gobject2",
+    "version": "1.18.4-1+b1",
+    "sha256": "c29e4900b772b0cbafeafbe3fb4ab7d0bc535f25791a5cdad3e821a2970f4c5f",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libcairo-gobject2/1.18.4-1%2Bb1/"
+  },
+  {
+    "library": "libcairo-script-interpreter.so.2",
+    "binary_package": "libcairo-script-interpreter2",
+    "version": "1.18.4-1+b1",
+    "sha256": "dfa4f90f5e2ff7557fdfdcab3a354687e321be88649eaa0f66c74ab66c66c21f",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libcairo-script-interpreter2/1.18.4-1%2Bb1/"
+  },
+  {
+    "library": "libcairo.so.2",
+    "binary_package": "libcairo2",
+    "version": "1.18.4-1+b1",
+    "sha256": "55e6961d9c35923426aca75b85e10d69977428ffb6569719be13a87eb4fcab66",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libcairo2/1.18.4-1%2Bb1/"
+  },
+  {
+    "library": "libcap.so.2",
+    "binary_package": "libcap2",
+    "version": "1:2.75-10+deb13u1+b3",
+    "sha256": "41217b0af128444f66dee8adda52b2ceaf19da00e5b0b155e2b87b857671286b",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libcap2/1%3A2.75-10%2Bdeb13u1%2Bb3/"
+  },
+  {
+    "library": "libcloudproviders.so.0",
+    "binary_package": "libcloudproviders0",
+    "version": "0.3.6-2",
+    "sha256": "0e700324c5afa3f083893b6be9bf6ddbac6aafa91c5d207f9f815e5a882a0fbe",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libcloudproviders0/0.3.6-2/"
+  },
+  {
+    "library": "libcom_err.so.2",
+    "binary_package": "libcom-err2",
+    "version": "1.47.2-3+b12",
+    "sha256": "dc4828400674492839b630c001db424cd38e5cecfcf46dbf705a637647e04bea",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libcom-err2/1.47.2-3%2Bb12/"
+  },
+  {
+    "library": "libcrypto.so.3",
+    "binary_package": "libssl3t64",
+    "version": "3.5.7-1~deb13u3",
+    "sha256": "8ae56f0a9481280a68c19f59809cd242a07a91ad7142944d21a878221992244b",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libssl3t64/3.5.7-1~deb13u3/"
+  },
+  {
+    "library": "libcurl-gnutls.so.4",
+    "binary_package": "libcurl3t64-gnutls",
+    "version": "8.14.1-2+deb13u7",
+    "sha256": "66e11cde15c921f44da4b27c7b815e29bc165696fa103c632121c8277841a713",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libcurl3t64-gnutls/8.14.1-2%2Bdeb13u7/"
+  },
+  {
+    "library": "libdatrie.so.1",
+    "binary_package": "libdatrie1",
+    "version": "0.2.13-3+b1",
+    "sha256": "ce632159af92e1d1ceec68652920c412fb105ea579c97c26896a29d1b876abde",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libdatrie1/0.2.13-3%2Bb1/"
+  },
+  {
+    "library": "libdeflate.so.0",
+    "binary_package": "libdeflate0",
+    "version": "1.23-2",
+    "sha256": "1f21f19cb8406b030cdf01b598ff399e084618e53164b56c813d8c2cd6e88aca",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libdeflate0/1.23-2/"
+  },
+  {
+    "library": "libepoxy.so.0",
+    "binary_package": "libepoxy0",
+    "version": "1.5.10-2",
+    "sha256": "508c6214d08b997e0509e74b568f1e66f574951105cb11e59d12ed74a4239f13",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libepoxy0/1.5.10-2/"
+  },
+  {
+    "library": "libexpat.so.1",
+    "binary_package": "libexpat1",
+    "version": "2.9.0-1~deb13u1",
+    "sha256": "36e7e50d21edcabed383bfddc594bb261c1c7cce456afdf23c5f53e849cda67c",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libexpat1/2.9.0-1~deb13u1/"
+  },
+  {
+    "library": "libffi.so.8",
+    "binary_package": "libffi8",
+    "version": "3.4.8-2",
+    "sha256": "922024ec5a23f7de1095b1cff2f6cbfb377b5d58cd51fd0ec2e8fe35427653e2",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libffi8/3.4.8-2/"
+  },
+  {
+    "library": "libfontconfig.so.1",
+    "binary_package": "libfontconfig1",
+    "version": "2.15.0-2.3",
+    "sha256": "d6344f71a0cfd5fcb154278f0be706021f75f79d1fcc973fc4ddb1dff40ab0ee",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libfontconfig1/2.15.0-2.3/"
+  },
+  {
+    "library": "libfreetype.so.6",
+    "binary_package": "libfreetype6",
+    "version": "2.13.3+dfsg-1+deb13u1",
+    "sha256": "9e376992a91e92d86809893a3b9eea22a4e27849db1686f6ca58032f79cdafb5",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libfreetype6/2.13.3%2Bdfsg-1%2Bdeb13u1/"
+  },
+  {
+    "library": "libfribidi.so.0",
+    "binary_package": "libfribidi0",
+    "version": "1.0.16-1",
+    "sha256": "bbd962bd1c3ac1c25dc983d2951962caf55acb46a80e33ef93e31392edd5a222",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libfribidi0/1.0.16-1/"
+  },
+  {
+    "library": "libgdk_pixbuf-2.0.so.0",
+    "binary_package": "libgdk-pixbuf-2.0-0",
+    "version": "2.42.12+dfsg-4+deb13u1",
+    "sha256": "e92815ef102d064b64eedf79b5ada7413197cad48432d2b13772724cd2204d30",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libgdk-pixbuf-2.0-0/2.42.12%2Bdfsg-4%2Bdeb13u1/"
+  },
+  {
+    "library": "libgio-2.0.so.0",
+    "binary_package": "libglib2.0-0t64",
+    "version": "2.84.4-3~deb13u5",
+    "sha256": "ada55aa768da50c23a114736ac39dd8d8c62f77a5519747f99e8836e86a1fd35",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libglib2.0-0t64/2.84.4-3~deb13u5/"
+  },
+  {
+    "library": "libglib-2.0.so.0",
+    "binary_package": "libglib2.0-0t64",
+    "version": "2.84.4-3~deb13u5",
+    "sha256": "980ab64e995225de1543779e3bafafac9d705904d42ca3b5eb76e7a336cc5e1d",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libglib2.0-0t64/2.84.4-3~deb13u5/"
+  },
+  {
+    "library": "libgmodule-2.0.so.0",
+    "binary_package": "libglib2.0-0t64",
+    "version": "2.84.4-3~deb13u5",
+    "sha256": "cb391dc09732706a0b2b9e2bf44ebe5539708cdeb8e8dd9c4ba910a958b78bb4",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libglib2.0-0t64/2.84.4-3~deb13u5/"
+  },
+  {
+    "library": "libgmp.so.10",
+    "binary_package": "libgmp10",
+    "version": "2:6.3.0+dfsg-3",
+    "sha256": "d15e1585c6c267296459570c8ac217ca9123044bcd4e896d2f686b32333445d2",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libgmp10/2%3A6.3.0%2Bdfsg-3/"
+  },
+  {
+    "library": "libgnutls.so.30",
+    "binary_package": "libgnutls30t64",
+    "version": "3.8.9-3+deb13u4",
+    "sha256": "4b14edde42e7cbeefd8a6d88d035e096f2e6412a535388bb1d073a1c196e2822",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libgnutls30t64/3.8.9-3%2Bdeb13u4/"
+  },
+  {
+    "library": "libgobject-2.0.so.0",
+    "binary_package": "libglib2.0-0t64",
+    "version": "2.84.4-3~deb13u5",
+    "sha256": "ea1b3b14267d075022abfb2a8ab1c61d568124ebba97553d7b45a4f6444abebe",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libglib2.0-0t64/2.84.4-3~deb13u5/"
+  },
+  {
+    "library": "libgraphene-1.0.so.0",
+    "binary_package": "libgraphene-1.0-0",
+    "version": "1.10.8-5",
+    "sha256": "8b313232e77ee9060a4c242e13c3731f2e815ff5af319b6003788c40510bfdfc",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libgraphene-1.0-0/1.10.8-5/"
+  },
+  {
+    "library": "libgraphite2.so.3",
+    "binary_package": "libgraphite2-3",
+    "version": "1.3.14-2+deb13u1",
+    "sha256": "5c4b17bdbd121d3c65f28c22d9c2a0504ca493d9e8fa7d7d31383c72237416b4",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libgraphite2-3/1.3.14-2%2Bdeb13u1/"
+  },
+  {
+    "library": "libgssapi_krb5.so.2",
+    "binary_package": "libgssapi-krb5-2",
+    "version": "1.21.3-5+deb13u1",
+    "sha256": "c290f761873ebeac539911010526e1c5db86218bfcb29672760da46841741de0",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libgssapi-krb5-2/1.21.3-5%2Bdeb13u1/"
+  },
+  {
+    "library": "libgtk-4.so.1",
+    "binary_package": "libgtk-4-1",
+    "version": "4.18.6+ds-2",
+    "sha256": "36afb4270891fd08e2ff5817541e2729ddd020cd1fc6af58bde53ce0ad769e8e",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libgtk-4-1/4.18.6%2Bds-2/"
+  },
+  {
+    "library": "libharfbuzz-subset.so.0",
+    "binary_package": "libharfbuzz-subset0",
+    "version": "10.2.0-1+deb13u1",
+    "sha256": "329eaf2cc92e5ca05b23ca65ab195dd7481ba3dbd4cd8275b4d86c33b5bb5a41",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libharfbuzz-subset0/10.2.0-1%2Bdeb13u1/"
+  },
+  {
+    "library": "libharfbuzz.so.0",
+    "binary_package": "libharfbuzz0b",
+    "version": "10.2.0-1+deb13u1",
+    "sha256": "c0cc41333a8fc0c24428a61ba0af6380aabb1f0d91ac48c13ed743b06c8ccc87",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libharfbuzz0b/10.2.0-1%2Bdeb13u1/"
+  },
+  {
+    "library": "libhogweed.so.6",
+    "binary_package": "libhogweed6t64",
+    "version": "3.10.1-1",
+    "sha256": "2663d9bdca20ba67d2d72f1d4c24b6fd0a3e97d5ee23e7b739788176cf904380",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libhogweed6t64/3.10.1-1/"
+  },
+  {
+    "library": "libidn2.so.0",
+    "binary_package": "libidn2-0",
+    "version": "2.3.8-2",
+    "sha256": "299cdc741f1dd0834a49d5cb44f3da26b1960bb110c1f521a084400d9b603cbf",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libidn2-0/2.3.8-2/"
+  },
+  {
+    "library": "libjbig.so.0",
+    "binary_package": "libjbig0",
+    "version": "2.1-6.1+b2",
+    "sha256": "7a4ff4cd3d0012f610f9eaed154ce593c5a26aaf08993456dbb3f4ac2d23cc6c",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libjbig0/2.1-6.1%2Bb2/"
+  },
+  {
+    "library": "libjpeg.so.62",
+    "binary_package": "libjpeg62-turbo",
+    "version": "1:2.1.5-4",
+    "sha256": "0928fd49fa79e10f72eb3276f1cf603d928201a628cd78e0118a2e9c01fd2dac",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libjpeg62-turbo/1%3A2.1.5-4/"
+  },
+  {
+    "library": "libk5crypto.so.3",
+    "binary_package": "libk5crypto3",
+    "version": "1.21.3-5+deb13u1",
+    "sha256": "c4c3221d0350f882cee0430b58d5fb289a5776c684d3156964864c8a9719dff1",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libk5crypto3/1.21.3-5%2Bdeb13u1/"
+  },
+  {
+    "library": "libkeyutils.so.1",
+    "binary_package": "libkeyutils1",
+    "version": "1.6.3-6",
+    "sha256": "e5d5a7450d08eff7d4bbcaac75ef2b94d3447c81a1b2ddf3ab85d2de4709a9a8",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libkeyutils1/1.6.3-6/"
+  },
+  {
+    "library": "libkrb5.so.3",
+    "binary_package": "libkrb5-3",
+    "version": "1.21.3-5+deb13u1",
+    "sha256": "c4ab64e6bc2874a83e649e4439be752465da027a0041e2bb5343f81c80f0882d",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libkrb5-3/1.21.3-5%2Bdeb13u1/"
+  },
+  {
+    "library": "libkrb5support.so.0",
+    "binary_package": "libkrb5support0",
+    "version": "1.21.3-5+deb13u1",
+    "sha256": "f559f051ee5d39f151a57d79f2cde475c484030098b0c73f9f7035b421b187c4",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libkrb5support0/1.21.3-5%2Bdeb13u1/"
+  },
+  {
+    "library": "liblber.so.2",
+    "binary_package": "libldap2",
+    "version": "2.6.10+dfsg-1",
+    "sha256": "ca319704dd4f58b5b3fc8510738850f03f18940544ba04bebf2fa8a23a798346",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libldap2/2.6.10%2Bdfsg-1/"
+  },
+  {
+    "library": "libldap.so.2",
+    "binary_package": "libldap2",
+    "version": "2.6.10+dfsg-1",
+    "sha256": "e8f34e65087f24f296fa7a65a8c65383f4a7e2b532c46e40463d4e59a206c20a",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libldap2/2.6.10%2Bdfsg-1/"
+  },
+  {
+    "library": "liblzma.so.5",
+    "binary_package": "liblzma5",
+    "version": "5.8.1-1+deb13u2",
+    "sha256": "7ca392e92ebb94b6f8ee094cbd5243185e4452377b94acc657f7ba8c8f9dda2c",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/liblzma5/5.8.1-1%2Bdeb13u2/"
+  },
+  {
+    "library": "liblzo2.so.2",
+    "binary_package": "liblzo2-2",
+    "version": "2.10-3+b1",
+    "sha256": "c5425e5594b9f73641796b7a311b55ee679773f840c5f1a211f5eea6fa35775b",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/liblzo2-2/2.10-3%2Bb1/"
+  },
+  {
+    "library": "libmount.so.1",
+    "binary_package": "libmount1",
+    "version": "2.41.5-0+deb13u1",
+    "sha256": "1654d2cf948e3608cc0d38340807d4ddac1114315a3a77f7b274c4c859cb2181",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libmount1/2.41.5-0%2Bdeb13u1/"
+  },
+  {
+    "library": "libnettle.so.8",
+    "binary_package": "libnettle8t64",
+    "version": "3.10.1-1",
+    "sha256": "34ac695c167a593d3587bd88592d33d53e5dc4035984f84446100962f57376fd",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libnettle8t64/3.10.1-1/"
+  },
+  {
+    "library": "libnghttp2.so.14",
+    "binary_package": "libnghttp2-14",
+    "version": "1.64.0-1.1+deb13u1",
+    "sha256": "207268890b5be3043575c97af4e08c8326a12321a8a83e7278681b6b6f7d5ea8",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libnghttp2-14/1.64.0-1.1%2Bdeb13u1/"
+  },
+  {
+    "library": "libnghttp3.so.9",
+    "binary_package": "libnghttp3-9",
+    "version": "1.8.0-1",
+    "sha256": "37ecaa050c23fee92d563eec8701164505ef880c00a513cbd6d1d03beeb8fa29",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libnghttp3-9/1.8.0-1/"
+  },
+  {
+    "library": "libngtcp2.so.16",
+    "binary_package": "libngtcp2-16",
+    "version": "1.11.0-1+deb13u1",
+    "sha256": "ac58fdb952991fdb624bcb275e9a9ded9e59228eb7a989c4d18b4339103f50d3",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libngtcp2-16/1.11.0-1%2Bdeb13u1/"
+  },
+  {
+    "library": "libngtcp2_crypto_gnutls.so.8",
+    "binary_package": "libngtcp2-crypto-gnutls8",
+    "version": "1.11.0-1+deb13u1",
+    "sha256": "32ff8ebba031c45a407f0d4bb7f0f97b372089789de05e43a8d9deb97f569edf",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libngtcp2-crypto-gnutls8/1.11.0-1%2Bdeb13u1/"
+  },
+  {
+    "library": "libp11-kit.so.0",
+    "binary_package": "libp11-kit0",
+    "version": "0.25.5-3",
+    "sha256": "e4ae39be74740511cf8e49e80fdfc16aeee7b822ee313793da1b78ce148ba05f",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libp11-kit0/0.25.5-3/"
+  },
+  {
+    "library": "libpango-1.0.so.0",
+    "binary_package": "libpango-1.0-0",
+    "version": "1.56.3-1",
+    "sha256": "3aeb194a48f427b907d77986cc8b1d7a2f43f8dab6a91abb3fa0416d5b071132",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libpango-1.0-0/1.56.3-1/"
+  },
+  {
+    "library": "libpangocairo-1.0.so.0",
+    "binary_package": "libpangocairo-1.0-0",
+    "version": "1.56.3-1",
+    "sha256": "cd9ea0195bea8dc358774b5c7d3b4ef345d0bfc34c69a76f4e9e6d6d17bc6a91",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libpangocairo-1.0-0/1.56.3-1/"
+  },
+  {
+    "library": "libpangoft2-1.0.so.0",
+    "binary_package": "libpangoft2-1.0-0",
+    "version": "1.56.3-1",
+    "sha256": "f0a0ac4128a21eaec63b8d9811ab670cdf1763abfcde5d2d6d4693ecc8c7af99",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libpangoft2-1.0-0/1.56.3-1/"
+  },
+  {
+    "library": "libpcre2-8.so.0",
+    "binary_package": "libpcre2-8-0",
+    "version": "10.46-1~deb13u3",
+    "sha256": "92e9b4167f9bbc237ca8f5526d82ee99ec9f8dbd0270ef1dd0ab24e2217f48e3",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libpcre2-8-0/10.46-1~deb13u3/"
+  },
+  {
+    "library": "libpixman-1.so.0",
+    "binary_package": "libpixman-1-0",
+    "version": "0.44.0-3",
+    "sha256": "806ef6cd6ff8dace4332b8d611afe2f1c5ec0c1b743ea7ed0ebd48ed307618cd",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libpixman-1-0/0.44.0-3/"
+  },
+  {
+    "library": "libpng16.so.16",
+    "binary_package": "libpng16-16t64",
+    "version": "1.6.48-1+deb13u6",
+    "sha256": "7dd8e62ca2f3b2b3bb642e485b1324b01950aad82eb63bad2c783ac94d80c001",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libpng16-16t64/1.6.48-1%2Bdeb13u6/"
+  },
+  {
+    "library": "libpsl.so.5",
+    "binary_package": "libpsl5t64",
+    "version": "0.21.2-1.1+b1",
+    "sha256": "d9a6975db1b66ed34bdc04195a92a77b7d29b8d6affe4c35c05d7eafe5424fef",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libpsl5t64/0.21.2-1.1%2Bb1/"
+  },
+  {
+    "library": "librtmp.so.1",
+    "binary_package": "librtmp1",
+    "version": "2.4+20151223.gitfa8646d.1-2+b5",
+    "sha256": "7d4c54c51f62085d79a4c96c7ad52f680f1f2e6d38ff7c8b8fa18d57f89df130",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/librtmp1/2.4%2B20151223.gitfa8646d.1-2%2Bb5/"
+  },
+  {
+    "library": "libsasl2.so.2",
+    "binary_package": "libsasl2-2",
+    "version": "2.1.28+dfsg1-9",
+    "sha256": "3f93968591811eb3972c3467c69c2968dd9cb2b51f7b7bb48de22ba8e17d13fd",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libsasl2-2/2.1.28%2Bdfsg1-9/"
+  },
+  {
+    "library": "libselinux.so.1",
+    "binary_package": "libselinux1",
+    "version": "3.8.1-1",
+    "sha256": "5cb5293b4e7590463b94f7b23152d54807a6a2ccaf8cac9e343908c6692c086c",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libselinux1/3.8.1-1/"
+  },
+  {
+    "library": "libsharpyuv.so.0",
+    "binary_package": "libsharpyuv0",
+    "version": "1.5.0-0.1",
+    "sha256": "36969fea33a1afb64c381f053a8870b486c41cba93e9cc4779a42687c1b391ca",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libsharpyuv0/1.5.0-0.1/"
+  },
+  {
+    "library": "libssh2.so.1",
+    "binary_package": "libssh2-1t64",
+    "version": "1.11.1-1+deb13u2",
+    "sha256": "bea384b0ed8797abdba6cb31b2de38ae2a6ad38d5a1cc13fb3704863bcbb15ca",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libssh2-1t64/1.11.1-1%2Bdeb13u2/"
+  },
+  {
+    "library": "libssl.so.3",
+    "binary_package": "libssl3t64",
+    "version": "3.5.7-1~deb13u3",
+    "sha256": "9592038e92d1f41affcbb625334d0b6e788714c889104fa6d5b107cf9fd657f2",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libssl3t64/3.5.7-1~deb13u3/"
+  },
+  {
+    "library": "libstemmer.so.0d",
+    "binary_package": "libstemmer0d",
+    "version": "2.2.0-4+b2",
+    "sha256": "bdcc406ce34dc0ad617cde72c14b6993d3caf95460ed0bef34460bb0feeaaa6d",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libstemmer0d/2.2.0-4%2Bb2/"
+  },
+  {
+    "library": "libsystemd.so.0",
+    "binary_package": "libsystemd0",
+    "version": "257.13-1~deb13u1",
+    "sha256": "c59f9015342de9c2dcb2decccb3d83218849fe3e4388c723a6528254fd7606f0",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libsystemd0/257.13-1~deb13u1/"
+  },
+  {
+    "library": "libtasn1.so.6",
+    "binary_package": "libtasn1-6",
+    "version": "4.20.0-2+deb13u1",
+    "sha256": "cea637336b0855f91260714181894bcea9f345a3a97ce68d6447f6031728cabd",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libtasn1-6/4.20.0-2%2Bdeb13u1/"
+  },
+  {
+    "library": "libthai.so.0",
+    "binary_package": "libthai0",
+    "version": "0.1.29-2+b1",
+    "sha256": "68da865e0efbc99eedc429f5e0c93a788cff55e85c0ecd37abc0279044a0cc32",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libthai0/0.1.29-2%2Bb1/"
+  },
+  {
+    "library": "libtiff.so.6",
+    "binary_package": "libtiff6",
+    "version": "4.7.0-3+deb13u3",
+    "sha256": "7f2309b13404f98171b54c07f75ad7c54673cec26ecaa874ac5273feda916c6f",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libtiff6/4.7.0-3%2Bdeb13u3/"
+  },
+  {
+    "library": "libunistring.so.5",
+    "binary_package": "libunistring5",
+    "version": "1.3-2",
+    "sha256": "9c200ec975ff24c0a259d4f6cf0d0fc1736d0c86da30fff3d499ad3d9a368b65",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libunistring5/1.3-2/"
+  },
+  {
+    "library": "libwebp.so.7",
+    "binary_package": "libwebp7",
+    "version": "1.5.0-0.1",
+    "sha256": "5f547b804f9c8f70aa2d64a70d49eb406ec4e295fa0772ebcadfba719f8c8668",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libwebp7/1.5.0-0.1/"
+  },
+  {
+    "library": "libxcb-render.so.0",
+    "binary_package": "libxcb-render0",
+    "version": "1.17.0-2+b1",
+    "sha256": "6ceffcf824902eb4d9566e2c646511d6914073d355016134f1260d8891e563b5",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libxcb-render0/1.17.0-2%2Bb1/"
+  },
+  {
+    "library": "libxcb-shm.so.0",
+    "binary_package": "libxcb-shm0",
+    "version": "1.17.0-2+b1",
+    "sha256": "4a57cf736337398b8dda5fd842da9d8d040ff484ee7b418836f499f875623e9c",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libxcb-shm0/1.17.0-2%2Bb1/"
+  },
+  {
+    "library": "libxcb.so.1",
+    "binary_package": "libxcb1",
+    "version": "1.17.0-2+b1",
+    "sha256": "a1cde2cec9b7b8b38e4cca450c55c63651efb80a2458d76964b56b763043f533",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libxcb1/1.17.0-2%2Bb1/"
+  },
+  {
+    "library": "libxml2.so.2",
+    "binary_package": "libxml2",
+    "version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3",
+    "sha256": "8f2643af68a9eba917929046806dabd1848867068d0eee0f6799288a8e886963",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libxml2/2.12.7%2Bdfsg%2Breally2.9.14-2.1%2Bdeb13u3/"
+  },
+  {
+    "library": "libxmlb.so.2",
+    "binary_package": "libxmlb2",
+    "version": "0.3.22-1",
+    "sha256": "27024875321e635d4b6e0f3f952b4ca6f6102638119c3ff61cf07ec89339c896",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libxmlb2/0.3.22-1/"
+  },
+  {
+    "library": "libyaml-0.so.2",
+    "binary_package": "libyaml-0-2",
+    "version": "0.2.5-2",
+    "sha256": "479b1004bc308258b7e90a1adc4e9e9595064ab361eda3279e0868ea79055d50",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libyaml-0-2/0.2.5-2/"
+  },
+  {
+    "library": "libz.so.1",
+    "binary_package": "zlib1g",
+    "version": "1:1.3.dfsg+really1.3.1-1+b1",
+    "sha256": "85590dd58edf5445e18bc7193e5ebc01ac5841f1ae187e97705a662e90c6421e",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/zlib1g/1%3A1.3.dfsg%2Breally1.3.1-1%2Bb1/"
+  },
+  {
+    "library": "libzstd.so.1",
+    "binary_package": "libzstd1",
+    "version": "1.5.7+dfsg-1",
+    "sha256": "27f07c9a49c2c956bcfb64cd4712976586a66facbf15fc7f09bc37413b5f2b21",
+    "debian_snapshot_binary_and_source": "https://snapshot.debian.org/binary/libzstd1/1.5.7%2Bdfsg-1/"
+  }
+]
