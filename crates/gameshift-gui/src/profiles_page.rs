@@ -119,7 +119,7 @@ pub fn activation() -> gtk::Box {
     let component = profiles::component().ok();
     let current = component
         .as_ref()
-        .is_some_and(|v| v["version"] == env!("CARGO_PKG_VERSION"));
+        .is_some_and(profiles::current_component_version);
     let install = gtk::Button::with_label(if current {
         "Contrôles GPU activés"
     } else if component.is_some() {
@@ -178,7 +178,7 @@ pub fn activation() -> gtk::Box {
             let component = profiles::component().ok();
             let current = component
                 .as_ref()
-                .is_some_and(|v| v["version"] == env!("CARGO_PKG_VERSION"));
+                .is_some_and(profiles::current_component_version);
             install.set_sensitive(!current);
             install.set_visible(!current);
             install.set_label(if component.is_some() {
@@ -371,6 +371,7 @@ fn profile_row(profile: &Profile, status: &gtk::Label, default: bool) -> gtk::Bo
 }
 pub fn page() -> gtk::ScrolledWindow {
     let content = gtk::Box::new(gtk::Orientation::Vertical, 18);
+    content.add_css_class("gs-unified-page");
     for side in [0, 1, 2, 3] {
         match side {
             0 => content.set_margin_top(24),
@@ -554,14 +555,10 @@ pub fn page() -> gtk::ScrolledWindow {
     let busy = Rc::new(std::cell::Cell::new(false));
     let mut last_config = String::new();
     let mut last_fetch = std::time::Instant::now() - Duration::from_secs(3);
+    content.set_hexpand(true);
     let scroll = gtk::ScrolledWindow::builder()
         .hscrollbar_policy(gtk::PolicyType::Never)
-        .child(
-            &adw::Clamp::builder()
-                .maximum_size(1400)
-                .child(&content)
-                .build(),
-        )
+.child(&content)
         .build();
     let weak = scroll.downgrade();
     glib::timeout_add_local(Duration::from_millis(200), move || {

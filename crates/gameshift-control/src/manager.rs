@@ -350,6 +350,7 @@ pub fn run() -> Result<()> {
     listener.set_nonblocking(true).map_err(|e| e.to_string())?;
     let busy = Arc::new(AtomicBool::new(false));
     let mut worker = None::<std::thread::JoinHandle<()>>;
+    let mut rapl = super::rapl_read::Cache::default();
     while !INTERRUPTED.load(Ordering::Relaxed) {
         match listener.accept() {
             Ok((mut stream, _)) => {
@@ -359,6 +360,11 @@ pub fn run() -> Result<()> {
                         json!({"ok":false,"error":"Compte non autorisé"}),
                     );
                     continue;
+                }
+                match rapl.handle(&mut stream) {
+                    Ok(true) => continue,
+                    Ok(false) => (),
+                    Err(error) => { let _=reply(&mut stream,json!({"ok":false,"error":error})); continue; }
                 }
                 if busy.swap(true, Ordering::Relaxed) {
                     let _ = reply(

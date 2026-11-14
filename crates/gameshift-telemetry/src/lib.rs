@@ -243,3 +243,7 @@ pub mod processes;
 
 #[cfg(test)]
 mod process_tests;
+
+pub mod engines;
+
+pub mod inventory;

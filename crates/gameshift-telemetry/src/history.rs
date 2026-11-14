@@ -13,10 +13,16 @@ pub struct PercentSeries {
 }
 impl PercentSeries {
     pub fn push(&mut self, time: Duration, percent: Option<f64>) {
+        self.push_value(time, percent, true);
+    }
+    pub fn push_rate(&mut self, time: Duration, value: Option<f64>) {
+        self.push_value(time, value, false);
+    }
+    fn push_value(&mut self, time: Duration, percent: Option<f64>, bounded: bool) {
         if self.points.back().is_some_and(|p| p.time >= time) {
             return;
         }
-        let percent = percent.filter(|p| p.is_finite() && (0. ..=100.).contains(p));
+        let percent = percent.filter(|p| p.is_finite() && *p >= 0. && (!bounded || *p <= 100.));
         self.points.push_back(Point { time, percent });
         let cutoff = time.saturating_sub(WINDOW);
         while self.points.len() > CAPACITY || self.points.front().is_some_and(|p| p.time < cutoff) {
@@ -55,5 +61,62 @@ mod tests {
         assert_eq!(series.points().count(), CAPACITY);
         series.push(Duration::from_secs(70), None);
         assert_eq!(series.points().count(), 1);
+    }
+}
+
+#[cfg(test)]
+mod rate_tests {
+    use super::*;
+    #[test]
+    fn observed_rates_are_unbounded_with_real_zero_and_invalid_gaps() {
+        let mut series = PercentSeries::default();
+        for (t, v) in [Some(0.), Some(2500.), Some(-1.), Some(f64::INFINITY), None]
+            .into_iter()
+            .enumerate()
+        {
+            series.push_rate(Duration::from_secs(t as u64), v);
+        }
+        assert_eq!(
+            series.points().map(|p| p.percent).collect::<Vec<_>>(),
+            [Some(0.), Some(2500.), None, None, None]
+        );
+        series.push_rate(Duration::from_secs(70), Some(5000.));
+        assert_eq!(series.points().count(), 1);
+    }
+}
+
+#[cfg(test)]
+mod percentage_history_tests {
+    use super::*;
+    #[test]
+    fn invalid_percentage_is_a_gap_without_erasing_the_sixty_second_history() {
+        let mut series = PercentSeries::default();
+        for (time, value) in [
+            (0, Some(0.)),
+            (10, Some(8.2)),
+            (20, Some(101.)),
+            (30, None),
+            (60, Some(100.)),
+        ] {
+            series.push(Duration::from_secs(time), value);
+        }
+        assert_eq!(
+            series
+                .points()
+                .map(|p| (p.time.as_secs(), p.percent))
+                .collect::<Vec<_>>(),
+            [
+                (0, Some(0.)),
+                (10, Some(8.2)),
+                (20, None),
+                (30, None),
+                (60, Some(100.))
+            ]
+        );
+        series.push(Duration::from_secs(61), Some(20.));
+        assert_eq!(
+            series.points().next().unwrap().time,
+            Duration::from_secs(10)
+        );
     }
 }

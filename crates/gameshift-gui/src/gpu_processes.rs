@@ -2,13 +2,13 @@
 use adw::prelude::*;
 use gameshift_telemetry::{
     gpus,
-    processes::{ProcessGpu, Tracker},
+    processes::{shared_snapshot, ProcessGpu},
 };
 use gtk::{gio, glib};
 use std::{
     cell::RefCell,
     rc::Rc,
-    sync::{mpsc, Arc, Mutex},
+    sync::mpsc,
     time::{Duration, Instant},
 };
 fn label(text: &str) -> gtk::Label {
@@ -299,7 +299,6 @@ pub fn panel(names: std::collections::BTreeMap<String, String>) -> gtk::Box {
             crate::profiles_page::task(&label, move || video(node));
         }
     });
-    let tracker = Arc::new(Mutex::new(Tracker::default()));
     let (tx, rx) = mpsc::channel();
     let weak = root.downgrade();
     let mut next = Instant::now() - Duration::from_secs(5);
@@ -325,20 +324,32 @@ pub fn panel(names: std::collections::BTreeMap<String, String>) -> gtk::Box {
             busy = true;
             next = Instant::now();
             let tx = tx.clone();
-            let tracker = tracker.clone();
             let gap = paused;
             paused = false;
             std::thread::spawn(move || {
-                let devices = gpus::discover().unwrap_or_default();
+                let inventory = gameshift_telemetry::inventory::current();
+                let devices = inventory.gpus.clone();
                 let sensors = devices
                     .iter()
-                    .map(|g| (g.pci.clone(), gpus::generic_sensors(g)))
+                    .map(|g| (g.pci.clone(), inventory.generic_sensors(&g.pci)))
                     .collect::<std::collections::BTreeMap<_, _>>();
-                let mut tracker = tracker.lock().unwrap();
+                gameshift_telemetry::inventory::failed(
+                    !inventory.errors.is_empty()
+                        || devices.iter().any(|g| {
+                            sensors.get(&g.pci).is_some_and(|readings| {
+                                readings.len() < inventory.generic_sensor_count(&g.pci)
+                            })
+                        }),
+                );
+                let mut snapshot = (*shared_snapshot(Duration::from_secs(1))).clone();
                 if gap {
-                    tracker.pause();
+                    for row in &mut snapshot.rows {
+                        for engine in &mut row.engines {
+                            engine.busy_percent = None;
+                        }
+                        row.history.clear();
+                    }
                 }
-                let snapshot = tracker.sample();
                 let _ = tx.send((devices, sensors, snapshot));
             });
         }

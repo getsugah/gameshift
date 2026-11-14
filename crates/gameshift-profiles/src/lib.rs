@@ -407,8 +407,9 @@ fn stage_bundle_at(source: &Path, parent: &Path) -> Result<StagedBundle> {
     }
     Ok(staged)
 }
+pub fn current_component_version(value:&Value)->bool {value["version"]==env!("CARGO_PKG_VERSION") && value["rapl_protocol"]==1}
 pub fn activate() -> Result<()> {
-    if component().is_ok_and(|v| v["version"] == env!("CARGO_PKG_VERSION")) {
+    if component().is_ok_and(|v| current_component_version(&v)) {
         return start();
     }
     let executable = std::env::current_exe().map_err(|e| e.to_string())?;
@@ -534,5 +535,15 @@ pub fn wait_transition() -> Result<()> {
             );
         }
         std::thread::sleep(Duration::from_millis(100));
+    }
+}
+
+#[cfg(test)]
+mod rapl_component_tests {
+    #[test]
+    fn old_same_version_helper_still_requires_rapl_update(){
+        let old=serde_json::json!({"version":env!("CARGO_PKG_VERSION"),"manager_protocol":3});
+        assert!(!super::current_component_version(&old));
+        let mut current=old;current["rapl_protocol"]=1.into();assert!(super::current_component_version(&current));
     }
 }

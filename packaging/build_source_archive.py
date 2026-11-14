@@ -11,7 +11,7 @@ import tarfile
 import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
-DOCS = ['ALPHA.md', 'PUBLIC_BUILD.md', 'GPU_PROFILES.md', 'AMDGPU_CONTROLS.md', 'THIRD_PARTY.md']
+DOCS = ['ALPHA.md', 'PUBLIC_BUILD.md', 'GPU_PROFILES.md', 'AMDGPU_CONTROLS.md', 'THIRD_PARTY.md', 'AURELIA_RESULTS.md', 'CPU_POWER_RAPL.md', 'GPU_ENGINE_MONITORING.md', 'SENSOR_DISCOVERY.md']
 PRIVATE = re.compile(rb'-----BEGIN (?:OPENSSH |RSA |EC |DSA )?PRIVATE KEY-----|(?:ghp_|github_pat_|glpat-|sk-proj-)[A-Za-z0-9_-]{20,}|/home/(?:builder|getsugah)(?:/|\b)|192\.168\.\d+\.\d+')
 
 

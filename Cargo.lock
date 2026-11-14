@@ -548,6 +548,7 @@ dependencies = [
 name = "gameshift-control"
 version = "0.5.0-alpha.2"
 dependencies = [
+ "gameshift-core",
  "libc",
  "serde",
  "serde_json",
@@ -637,6 +638,7 @@ name = "gameshift-telemetry"
 version = "0.5.0-alpha.2"
 dependencies = [
  "gameshift-control",
+ "gameshift-core",
  "serde",
 ]
 

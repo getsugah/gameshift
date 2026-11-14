@@ -122,10 +122,13 @@ pub fn panel(active: Rc<Cell<bool>>) -> gtk::Box {
     panel.append(&crate::benchmark_dashboard::telemetry(active.clone()));
     let progress_bar = gtk::ProgressBar::new();
     panel.append(&progress_bar);
+    let overview = gtk::Box::new(gtk::Orientation::Vertical, 12);
+    overview.set_visible(false);
+    panel.append(&overview);
     let output = label("");
     let details = gtk::Expander::new(Some("Rapport CPU · mesures et variation"));
     details.set_child(Some(&output));
-    details.set_expanded(true);
+    details.set_expanded(false);
     panel.append(&details);
     panel.append(&crate::context_help::guide(&[
         ("Temps moyen par étape de simulation", "Durée totale observée d’une étape, y compris la coordination et les attentes. Plus elle est faible, plus ce travail précis est traité rapidement. Ne pas additionner les durées des threads exécutés en parallèle."),
@@ -218,11 +221,13 @@ pub fn panel(active: Rc<Cell<bool>>) -> gtk::Box {
             let result = guard.and_then(|_guard|(if config.duration.is_some(){gameshift_cpu::calibrated::run(config,&flag,&observed)}else{run_cancellable(config,&flag)}).map(|report| {
                 let exported = export(&report);
                 let rendered = summary(&report);
+                let overview_data = crate::aurelia_results::cpu(&report);
                 let points = report.cases.iter().map(|c| (if cache { c.size_mib as f64 } else { c.workers as f64 }, if cache {c.entities_per_second/1_000_000.}else{c.mean_step_ms})).collect::<Vec<_>>();
-                (rendered, points, exported)
+                (rendered, points, exported, overview_data)
             }));
             let _ = tx.send(result);
         });
+        let overview = overview.downgrade();
         let start = start.downgrade(); let controls = controls.downgrade(); let stop = stop.downgrade();
         let timing_controls=durations.root.downgrade();
         let progress_bar=progress_bar.downgrade();
@@ -241,9 +246,10 @@ pub fn panel(active: Rc<Cell<bool>>) -> gtk::Box {
             if let Some(w) = controls.upgrade() { w.set_sensitive(true); }
             if let Some(w) = stop.upgrade() { w.set_sensitive(false); }
             match received {
-                Ok((rendered, points, exported)) => {
+                Ok((rendered, points, exported, overview_data)) => {
                     if let Some(w) = status.upgrade() { w.set_text(&match exported { Ok(path) => format!("Terminé · exports : {}", path.display()), Err(e) => format!("Mesuré, mais export impossible : {e}") }); }
                     if let Some(w) = output.upgrade() { w.set_text(&rendered); }
+                    if let Some(w) = overview.upgrade() { crate::aurelia_results::render_cpu(&w, &overview_data); }
                     *data.borrow_mut() = points;
                     if let Some(w) = chart.upgrade() { w.set_tooltip_text(Some(if cache { "X : taille des données (Mio) ; Y : millions d’objets traités/s" } else { "X : threads CPU utilisés ; Y : temps moyen par étape de simulation" })); w.queue_draw(); }
                 }

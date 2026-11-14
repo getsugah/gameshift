@@ -49,3 +49,7 @@ pub struct Snapshot {
 pub mod duration;
 
 pub mod preferences;
+
+pub mod rapl;
+
+pub mod discovery;

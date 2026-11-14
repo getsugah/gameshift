@@ -81,6 +81,35 @@ pub fn generic_sensors(gpu: &Gpu) -> Vec<SensorValue> {
     generic_sensors_at(Path::new("/"), gpu)
 }
 pub fn generic_sensors_at(root: &Path, gpu: &Gpu) -> Vec<SensorValue> {
+    generic_paths_at(root, gpu)
+        .iter()
+        .filter_map(GenericSensor::read)
+        .collect()
+}
+#[derive(Debug)]
+pub struct GenericSensor {
+    pub label: String,
+    pub unit: String,
+    pub path: std::path::PathBuf,
+    divisor: f64,
+}
+impl GenericSensor {
+    pub fn read(&self) -> Option<SensorValue> {
+        let value = fs::read_to_string(&self.path)
+            .ok()?
+            .trim()
+            .parse::<f64>()
+            .ok()
+            .filter(|v| v.is_finite() && *v >= 0.)?;
+        Some(SensorValue {
+            label: self.label.clone(),
+            value: value / self.divisor,
+            unit: self.unit.clone(),
+            source: self.path.display().to_string(),
+        })
+    }
+}
+pub fn generic_paths_at(root: &Path, gpu: &Gpu) -> Vec<GenericSensor> {
     let mut out = Vec::new();
     let base = root
         .join("sys/bus/pci/devices")
@@ -124,22 +153,15 @@ pub fn generic_sensors_at(root: &Path, gpu: &Gpu) -> Vec<SensorValue> {
             } else {
                 continue;
             };
-            let Some(value) = fs::read_to_string(file.path())
-                .ok()
-                .and_then(|s| s.trim().parse::<f64>().ok())
-                .filter(|v| v.is_finite() && *v >= 0.)
-            else {
-                continue;
-            };
             let label = fs::read_to_string(hwmon.path().join(format!("{key}_label")))
                 .ok()
                 .map(|s| s.trim().to_owned())
                 .unwrap_or_else(|| key.into());
-            out.push(SensorValue {
+            out.push(GenericSensor {
                 label,
-                value: value / divisor,
+                divisor,
                 unit: unit.into(),
-                source: file.path().display().to_string(),
+                path: file.path(),
             });
         }
     }

@@ -1,6 +1,7 @@
 //! On-demand Polkit guardian. Never starts at boot; never accepts filesystem paths.
 mod install;
 mod manager;
+mod rapl_read;
 use gameshift_control::*;
 use serde::{Deserialize, Serialize};
 use std::{
@@ -418,7 +419,7 @@ fn main() {
     if std::env::args().nth(1).as_deref() == Some("--component-version") {
         println!(
             "{}",
-            serde_json::json!({"version":env!("CARGO_PKG_VERSION"),"manager_protocol":3})
+            serde_json::json!({"version":env!("CARGO_PKG_VERSION"),"manager_protocol":3,"rapl_protocol":1})
         );
         return;
     }

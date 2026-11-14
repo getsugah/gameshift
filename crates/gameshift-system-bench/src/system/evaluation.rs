@@ -168,6 +168,12 @@ fn applications(value: serde_json::Value) -> Result<Category, String> {
     Ok(Category{id:"applications".into(),state,elapsed_seconds:0.,metrics,raw:value,notes:vec!["Bibliothèques hôte : compression/décompression zstd, image PNG, SHA-256 OpenSSL. Une absence ne devient pas un zéro.".into()]})
 }
 pub fn run(kind: SystemKind, mut progress: impl FnMut(&str, f64)) -> Result<Session, String> {
+    run_version(kind, false, &mut progress)
+}
+pub fn run_with_storage(kind: SystemKind, mut progress: impl FnMut(&str, f64)) -> Result<Session, String> {
+    run_version(kind, true, &mut progress)
+}
+fn run_version(kind: SystemKind, storage: bool, mut progress: impl FnMut(&str, f64)) -> Result<Session, String> {
     let _profile_guard = gameshift_control::benchmark::BenchmarkGuard::begin()?;
     let profile_before = gameshift_control::benchmark::profile_snapshot();
     let started = Instant::now();
@@ -280,6 +286,10 @@ pub fn run(kind: SystemKind, mut progress: impl FnMut(&str, f64)) -> Result<Sess
     };
     apps.elapsed_seconds = time.elapsed().as_secs_f64();
     categories.push(apps);
+    if storage {
+        progress("Stockage : lecture vérifiée et écriture synchronisée", 0.95);
+        categories.push(super::storage::run());
+    }
     let after = gameshift_cpu::environment::Snapshot::read(&cpus);
     let controls_after = gameshift_control::snapshot_all();
     let elapsed = started.elapsed().as_secs_f64();
@@ -292,7 +302,18 @@ pub fn run(kind: SystemKind, mut progress: impl FnMut(&str, f64)) -> Result<Sess
         categories,
         parameters: serde_json::json!({"plan":crate::SuitePlan::default(),"scene":gameshift_bench::SCENE_VERSION,"cpu_workers":cpu::workers(),"canonical_cpu_epoch_steps":64,"gpu_render":"offscreen","render_config":config.ok(),"ram_kernel":"explicit-SSE2-on-x86_64-volatile-fallback","gpu_profile_before":profile_before,"gpu_profile_after":gameshift_control::benchmark::profile_snapshot(),"driver_controls_before":controls_before,"driver_controls_after":controls_after,"driver_controls_changed":controls_before!=controls_after,"cpu_environment_before":before,"cpu_environment_after":after,"score_version":"aurelia-system-relative-v2"}),
     };
-    let report=Session{schema_version:2,protocol:PROTOCOL.into(),application_version:env!("CARGO_PKG_VERSION").into(),completed_unix_seconds:SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e|e.to_string())?.as_secs(),kind,fingerprint,elapsed_seconds:elapsed,metrics,cpu_raw:vec![],glibc_raw,limitations:vec!["Durée cible indicative ; résultats manquants explicites, aucun remplacement ni score zéro.".into(),"Le rendu GPU système est hors écran ; les profils historiques fenêtrés restent indépendants.".into()],system:Some(system)};
+    let mut report=Session{schema_version:2,protocol:PROTOCOL.into(),application_version:env!("CARGO_PKG_VERSION").into(),completed_unix_seconds:SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e|e.to_string())?.as_secs(),kind,fingerprint,elapsed_seconds:elapsed,metrics,cpu_raw:vec![],glibc_raw,limitations:vec!["Durée cible indicative ; résultats manquants explicites, aucun remplacement ni score zéro.".into(),"Le rendu GPU système est hors écran ; les profils historiques fenêtrés restent indépendants.".into()],system:Some(system)};
+    if storage {
+        report.schema_version = 3;
+        report.protocol = super::scoring::PROTOCOL.into();
+        report.system.as_mut().ok_or("Rapport système absent")?.protocol = super::scoring::PROTOCOL.into();
+        let points = serde_json::to_value(super::scoring::calculate(&report)).map_err(|e| e.to_string())?;
+        if let Some(body) = report.system.as_mut() {
+            body.protocol = super::scoring::PROTOCOL.into();
+            body.parameters["rate_scores"] = points;
+            body.parameters["score_version"] = super::scoring::VERSION.into();
+        }
+    }
     report.validate()?;
     progress("Rapport individuel disponible", 1.);
     Ok(report)

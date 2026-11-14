@@ -3,7 +3,7 @@ use adw::prelude::*;
 use gameshift_core::Snapshot;
 use gameshift_telemetry::{
     capabilities::{Category, Inventory, ReadPolicy, ReadState, WriteState},
-    device::{DeviceSensors, Measurement, Metric},
+    device::{Measurement, Metric},
 };
 use gtk::glib;
 use std::{
@@ -118,18 +118,20 @@ struct Frame {
     errors: Vec<String>,
 }
 fn collect() -> Result<Vec<Frame>, String> {
+    let inventory = gameshift_telemetry::inventory::current();
     let mut frames = Vec::new();
-    let mut errors = Vec::new();
-    for device in DeviceSensors::discover_all()? {
-        match device {
-            Ok(device) => frames.push(Frame {
-                pci: device.pci_address.clone(),
-                values: device.read(),
-                errors: device.discovery_errors,
-            }),
-            Err(error) => errors.push(error),
-        }
+    let errors = inventory.errors.clone();
+    let mut failed = !errors.is_empty();
+    for device in &inventory.devices {
+        let values = device.read();
+        failed |= values.iter().any(|m| m.error.is_some());
+        frames.push(Frame {
+            pci: device.pci_address.clone(),
+            values,
+            errors: device.discovery_errors.clone(),
+        });
     }
+    gameshift_telemetry::inventory::failed(failed);
     if frames.is_empty() && !errors.is_empty() {
         return Err(errors.join("\n"));
     }
@@ -508,7 +510,7 @@ pub fn page(stack: &gtk::Stack, snapshot: &Snapshot) -> gtk::Box {
     let explore = gtk::Button::with_label("Explorer le pilote");
     explore.add_css_class("gs-gpu-action");
     let measure = gtk::Button::with_label("Mesurer avec Aurelia");
-    measure.add_css_class("flat");
+    measure.add_css_class("gs-home-aurelia");
     actions.append(&explore);
     actions.append(&measure);
     root.append(&actions);

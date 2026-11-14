@@ -25,8 +25,8 @@ fn label(value: &str) -> gtk::Label {
     l.set_selectable(true);
     l
 }
-type IndividualDisplay = (String, Vec<(String, String)>, String);
-type ComparisonDisplay = (String, Vec<(String, Option<f64>)>);
+type IndividualDisplay = (crate::aurelia_results::SystemResult, String);
+type ComparisonDisplay = (crate::aurelia_results::SystemResult, String);
 enum Event {
     Progress(String, f64),
     Saved(Result<Entry, String>),
@@ -49,7 +49,7 @@ fn run_program(
     let mut command = Command::new(executable);
     command
         .process_group(0)
-        .args(["--evaluate", kind])
+        .args(["--evaluate-storage", kind])
         .env_remove("LD_LIBRARY_PATH")
         .env_remove("LD_PRELOAD")
         .env_remove("LD_AUDIT")
@@ -166,54 +166,26 @@ fn view_report(id: String, reference: Option<String>, tx: mpsc::Sender<Event>) {
             let root = store::root();
             let session = store::load(&root, &id)?;
             let mut text = reporting::individual(&session);
-            if let Some(reference) = reference {
-                if root
-                    .join("references")
-                    .join(format!("{reference}.json"))
-                    .is_file()
-                {
-                    let baseline = store::load(&root, &reference)?;
-                    text.push_str("\nINDICES RELATIFS À LA RÉFÉRENCE CONSERVÉE\n");
-                    text.push_str(
-                        &reporting::compare_text(&baseline, &session)
-                            .unwrap_or_else(|e| format!("Indices indisponibles : {e}")),
-                    );
-                }
+            let mut baseline = reference
+                .filter(|id| root.join("references").join(format!("{id}.json")).is_file())
+                .map(|id| store::load(&root, &id))
+                .transpose()?;
+            if baseline.is_none() {
+                baseline = store::list(&root)?.into_iter()
+                    .filter(|entry| entry.id != id && entry.protocol == session.protocol && entry.completed_unix_seconds <= session.completed_unix_seconds)
+                    .take(16)
+                    .filter_map(|entry| store::load(&root,&entry.id).ok())
+                    .find(|candidate| reporting::compare(candidate,&session).is_ok() && ["cpu","gpu","ram","storage"].iter().any(|category| gameshift_system_bench::system::scoring::compatible(candidate,&session,category,false)));
             }
-            let mut summary = format!(
-                "{:.1} s · {}\nCPU : {}\n",
-                session.elapsed_seconds,
-                session.protocol,
-                session
-                    .fingerprint
-                    .cpu_model
-                    .as_deref()
-                    .unwrap_or("indisponible")
-            );
-            let measures = session
-                .metrics
-                .iter()
-                .take(16)
-                .map(|metric| {
-                    (
-                        metric.label.clone(),
-                        format!(
-                            "{:.3} {}\nVariation entre répétitions : {:.2} %",
-                            metric.mean(),
-                            metric.unit,
-                            metric.cv() * 100.
-                        ),
-                    )
-                })
-                .collect::<Vec<_>>();
-            if let Some(body) = &session.system {
-                if let Some(name) =
-                    body.parameters["gpu_profile_before"]["active_profile"]["name"].as_str()
-                {
-                    summary.push_str(&format!("Profil GPU observé avant le test : {name}\n"));
-                }
+            if let Some(baseline) = &baseline {
+                text.push_str("\nINDICES RELATIFS À LA RÉFÉRENCE CONSERVÉE\n");
+                text.push_str(
+                    &reporting::compare_text(baseline, &session)
+                        .unwrap_or_else(|e| format!("Indices indisponibles : {e}")),
+                );
             }
-            Ok((summary, measures, text))
+            let presentation = crate::aurelia_results::system(&session, baseline.as_ref(), false);
+            Ok((presentation, text))
         })();
         let _ = tx.send(Event::Viewed(outcome));
     });
@@ -292,19 +264,24 @@ fn refresh(
 fn selected(entries: &Rc<RefCell<Vec<Entry>>>, dropdown: &gtk::DropDown) -> Option<Entry> {
     entries.borrow().get(dropdown.selected() as usize).cloned()
 }
-pub fn panel(active: Rc<Cell<bool>>) -> gtk::Box {
+pub fn panel(active: Rc<Cell<bool>>, navigation: &gtk::Stack) -> gtk::Box {
     let panel = gtk::Box::new(gtk::Orientation::Vertical, 10);
-    panel.add_css_class("gs-card");
-    let heading = label("Aurelia · Évaluation du système");
+    panel.add_css_class("gs-aurelia-dashboard");
+    let heading = label("Aurelia Benchmarks");
+    heading.add_css_class("gs-aurelia-title");
     heading.add_css_class("gs-section-title");
     panel.append(&heading);
-    panel.append(&label("Sept catégories : CPU, cache, RAM native, GPU Vulkan, charge combinée, glibc et bibliothèques système. Les résultats sont conservés automatiquement. Cible : environ deux minutes ; la durée réelle peut dépasser cette estimation."));
+    let subtitle=label("Banc d’essai synthétique CPU, GPU, mémoire et stockage");
+    panel.append(&subtitle);
     let spaces = gtk::Stack::new();
+    spaces.set_widget_name("aurelia-workspace");
     spaces.set_vhomogeneous(false);
     spaces.set_hhomogeneous(false);
-    let switcher = gtk::StackSwitcher::new();
-    switcher.set_stack(Some(&spaces));
-    panel.append(&switcher);
+    let back=gtk::Button::with_label("← Revenir aux résultats");
+    back.set_halign(gtk::Align::Start);back.add_css_class("flat");back.set_visible(false);
+    let weak_spaces=spaces.downgrade();back.connect_clicked(move |_|{if let Some(spaces)=weak_spaces.upgrade(){spaces.set_visible_child_name("results");}});
+    let weak_back=back.downgrade();spaces.connect_visible_child_name_notify(move|spaces|{if let Some(back)=weak_back.upgrade(){back.set_visible(spaces.visible_child_name().as_deref()!=Some("results"));}});
+    panel.append(&back);
     panel.append(&spaces);
     let launch = gtk::Box::new(gtk::Orientation::Vertical, 12);
     let tracking = gtk::Box::new(gtk::Orientation::Vertical, 14);
@@ -315,8 +292,9 @@ pub fn panel(active: Rc<Cell<bool>>) -> gtk::Box {
     spaces.add_titled(&results, Some("results"), "Résultats");
     spaces.add_titled(&history, Some("history"), "Historique & comparaison");
     let advanced = gtk::Expander::new(Some("Protocole et conditions de comparaison"));
+    advanced.set_expanded(true);
     let advanced_content = gtk::Box::new(gtk::Orientation::Vertical, 8);
-    advanced_content.append(&crate::context_help::heading("Même protocole, même AppImage", "Les indices sont relatifs à la session de référence (100). Le score natif exige cinq catégories ; le score applicatif reste indépendant. Les phases indisponibles ne sont pas remplacées. Une différence de version ne prouve pas la cause d’un gain. Les mesures incertaines restent visibles avec « Écart à confirmer »."));
+    advanced_content.append(&crate::context_help::heading("Mesures, points et comparaisons", "Le profil complet ajoute trois lectures et trois écritures de 256 Mio dans le dossier d’état GameShift, avec O_DIRECT et synchronisation. Les points sont calculés à partir des débits, K = 1. Le global exige CPU, GPU, RAM et stockage. Les anciens indices relatifs et rapports restent disponibles dans les détails. Utilisez la même AppImage et des charges compatibles pour comparer."));
     advanced.set_child(Some(&advanced_content));
     launch.append(&advanced);
     let kind = gtk::DropDown::from_strings(&[
@@ -324,19 +302,44 @@ pub fn panel(active: Rc<Cell<bool>>) -> gtk::Box {
         "Configuration optimisée déclarée",
     ]);
     advanced_content.append(&kind);
-    let buttons = gtk::FlowBox::new();
-    buttons.set_selection_mode(gtk::SelectionMode::None);
-    buttons.set_column_spacing(8);
-    buttons.set_row_spacing(8);
-    buttons.set_max_children_per_line(4);
-    let start = gtk::Button::with_label("Évaluer mon système");
+    let start = gtk::Button::with_label("▶  Lancer un benchmark");
     start.add_css_class("suggested-action");
     let cancel_button = gtk::Button::with_label("Annuler");
     cancel_button.set_sensitive(false);
     let import = gtk::Button::with_label("Importer un résultat");
     let export = gtk::Button::with_label("Exporter le résultat B");
-    buttons.insert(&start, -1);
-    launch.append(&buttons);
+    export.set_widget_name("aurelia-export-result");
+    let header = gtk::FlowBox::new();
+    header.set_selection_mode(gtk::SelectionMode::None);
+    header.set_max_children_per_line(2);
+    header.set_column_spacing(12);
+    let profile = gtk::DropDown::from_strings(&["Complet (recommandé)", "CPU avancé", "GPU Vulkan", "Outils et informations"]);
+    let navigation = navigation.downgrade();
+    profile.connect_selected_notify(move |profile| {
+        if let Some(navigation) = navigation.upgrade() {
+            match profile.selected() { 1 => navigation.set_visible_child_name("cpu"), 2 => navigation.set_visible_child_name("vulkan"), 3 => navigation.set_visible_child_name("home"), _ => return }
+            profile.set_selected(0);
+        }
+    });
+    profile.set_tooltip_text(Some("Les profils CPU avancé et GPU Vulkan restent disponibles dans les onglets existants."));
+    header.insert(&profile, -1);
+    header.insert(&start, -1);
+    panel.remove(&heading);
+    panel.remove(&subtitle);
+    let title_row=gtk::Box::new(gtk::Orientation::Horizontal,12);
+    let mark=gtk::DrawingArea::new();mark.set_content_width(48);mark.set_content_height(48);
+    mark.set_draw_func(|_,c,w,h|{c.scale(w as f64/48.,h as f64/48.);c.set_source_rgb(0.96,0.62,0.04);c.move_to(3.,43.);c.line_to(23.,5.);c.line_to(34.,5.);c.line_to(25.,23.);c.line_to(36.,43.);c.line_to(25.,43.);c.line_to(20.,33.);c.line_to(15.,43.);c.close_path();let _=c.fill();c.move_to(36.,6.);c.line_to(46.,43.);c.line_to(38.,38.);c.line_to(30.,18.);c.close_path();let _=c.fill();});
+    title_row.append(&mark);
+    let title=gtk::Box::new(gtk::Orientation::Vertical,4);title.append(&heading);title.append(&subtitle);title_row.append(&title);
+    heading.set_wrap(false);heading.set_ellipsize(gtk::pango::EllipsizeMode::End);
+    subtitle.set_max_width_chars(50);
+    let full_header=crate::aurelia_dashboard::header(&title_row,&header);
+    full_header.add_css_class("gs-aurelia-header");panel.prepend(&full_header);
+    let conditions=gtk::Button::from_icon_name("emblem-system-symbolic");
+    conditions.set_tooltip_text(Some("Conditions du benchmark et configuration déclarée"));
+    let weak_spaces=spaces.downgrade();conditions.connect_clicked(move |_|{if let Some(spaces)=weak_spaces.upgrade(){spaces.set_visible_child_name("launch");}});
+    header.insert(&conditions,-1);
+    header.set_max_children_per_line(3);
     tracking.append(&cancel_button);
     tracking.append(&crate::benchmark_dashboard::telemetry(active.clone()));
     let progress = gtk::ProgressBar::new();
@@ -345,7 +348,8 @@ pub fn panel(active: Rc<Cell<bool>>) -> gtk::Box {
         "Avancement des catégories terminées ; la barre ne prédit pas la durée restante.",
     ));
     tracking.append(&progress);
-    let status = label("Aucune modification du système. Les résultats restent sur cette machine.");
+    let status = label("");
+    status.add_css_class("gs-aurelia-feedback");
     panel.append(&status);
     let search = gtk::SearchEntry::new();
     search.set_placeholder_text(Some("Rechercher : machine, protocole, date ou identifiant"));
@@ -379,14 +383,18 @@ pub fn panel(active: Rc<Cell<bool>>) -> gtk::Box {
         "Comparer des machines différentes (épreuves compatibles uniquement)",
     );
     history.append(&cross_hardware);
-    let result=label("Consultez un rapport individuel sans référence ni comparaison. Pour comparer deux distributions, conservez exactement la même AppImage et exportez le JSON.");
-    results.append(&result);
+    let result=label("Résultat conservé automatiquement · mesures brutes et conditions disponibles dans les détails.");
+    // Status remains available to event handlers; the dashboard owns its summary.
+
     let comparison_bars = gtk::Box::new(gtk::Orientation::Vertical, 8);
+    comparison_bars.set_widget_name("aurelia-result-body");
     results.append(&comparison_bars);
+    crate::aurelia_dashboard::empty(&comparison_bars);
+    spaces.set_visible_child_name("results");
     let details = label("");
-    let expander = gtk::Expander::new(Some("Mesures détaillées et variation entre répétitions"));
+    let expander = gtk::Expander::new(Some("Rapport complet · conditions, mesures et méthode"));
     expander.set_child(Some(&details));
-    results.append(&expander);
+    history.append(&expander);
     let transfer = gtk::Box::new(gtk::Orientation::Horizontal, 8);
     transfer.append(&import);
     transfer.append(&export);
@@ -410,6 +418,11 @@ pub fn panel(active: Rc<Cell<bool>>) -> gtk::Box {
     let evaluating = Rc::new(Cell::new(false));
     let cancel = Arc::new(AtomicBool::new(false));
     let (tx, rx) = mpsc::channel::<Event>();
+    if let Some(entry) = entries.borrow().first().cloned() {
+        let tx = tx.clone();
+        busy.set(true);
+        view_report(entry.id, None, tx);
+    }
     {
         let active = active.clone();
         let busy = busy.clone();
@@ -524,15 +537,9 @@ pub fn panel(active: Rc<Cell<bool>>) -> gtk::Box {
                     let a = store::load(&root, &a.id)?;
                     let b = store::load(&root, &b.id)?;
                     let text = reporting::compare_text_with_hardware(&a, &b, across_hardware)?;
-                    let bars = if a.system.is_some() && b.system.is_some() {
-                        reporting::compare_with_hardware(&a, &b, across_hardware)?
-                            .categories
-                            .into_iter()
-                            .collect()
-                    } else {
-                        Vec::new()
-                    };
-                    Ok((text, bars))
+                    let presentation =
+                        crate::aurelia_results::system(&b, Some(&a), across_hardware);
+                    Ok((presentation, text))
                 })();
                 let _ = tx.send(Event::Compared(outcome));
             });
@@ -739,92 +746,32 @@ pub fn panel(active: Rc<Cell<bool>>) -> gtk::Box {
                         }
                     }
                 }
-                Event::Viewed(outcome) => match outcome {
-                    Ok((summary, measures, text)) => {
-                        while let Some(child) = comparison_bars.first_child() {
-                            comparison_bars.remove(&child);
-                        }
-                        let grid = gtk::FlowBox::new();
-                        grid.set_selection_mode(gtk::SelectionMode::None);
-                        grid.set_min_children_per_line(1);
-                        grid.set_max_children_per_line(3);
-                        grid.set_homogeneous(true);
-                        grid.set_row_spacing(12);
-                        grid.set_column_spacing(12);
-                        for (name, value) in measures {
-                            let card = gtk::Box::new(gtk::Orientation::Vertical, 8);
-                            card.add_css_class("gs-card");
-                            let heading = label(&name);
-                            heading.add_css_class("heading");
-                            card.append(&heading);
-                            let value = label(&value);
-                            value.add_css_class("gs-section-title");
-                            card.append(&value);
-                            grid.insert(&card, -1);
-                        }
-                        comparison_bars.append(&grid);
-                        result.set_text(&summary);
+                Event::Viewed(outcome) => { busy.set(false); match outcome {
+                    Ok((presentation, text)) => {
+                        crate::aurelia_results::render_system(&comparison_bars, &presentation);
+                        result.set_text("Résultat individuel · mesures enregistrées");
                         details.set_text(&text);
                         spaces.set_visible_child_name("results");
                         status.set_text("Rapport individuel disponible ; les comparaisons restent facultatives.");
                     }
                     Err(e) => status.set_text(&e),
-                },
+                }},
                 Event::Compared(outcome) => {
                     busy.set(false);
                     active.set(false);
                     match outcome {
-                        Ok((comparison, bars)) => {
+                        Ok((presentation, comparison)) => {
                             spaces.set_visible_child_name("results");
-                            result.set_text(
-                                &comparison.lines().take(6).collect::<Vec<_>>().join("\n"),
-                            );
+                            result.set_text("Comparaison A / B · référence A = 100");
                             details.set_text(&comparison);
-                            while let Some(child) = comparison_bars.first_child() {
-                                comparison_bars.remove(&child);
-                            }
-                            let maximum =
-                                bars.iter().filter_map(|(_, v)| *v).fold(100., f64::max) * 1.05;
-                            for (name, value) in bars {
-                                let name = match name.as_str() {
-                                    "cpu" => "CPU",
-                                    "cache" => "Cache",
-                                    "ram" => "RAM",
-                                    "gpu" => "GPU",
-                                    "combined" => "Charge combinée",
-                                    "glibc" => "glibc",
-                                    "applications" => "Bibliothèques",
-                                    other => other,
-                                };
-                                comparison_bars.append(&label(&format!(
-                                    "{name} · A = 100 · B = {}",
-                                    value
-                                        .map(|v| format!("{v:.2}"))
-                                        .unwrap_or_else(|| "Non comparable".into())
-                                )));
-                                if let Some(value) = value {
-                                    for (caption, index) in
-                                        [("Référence A", 100.), ("Résultat B", value)]
-                                    {
-                                        let row = gtk::Box::new(gtk::Orientation::Horizontal, 8);
-                                        let name = label(caption);
-                                        name.set_width_chars(12);
-                                        row.append(&name);
-                                        let bar = gtk::LevelBar::for_interval(0., maximum);
-                                        bar.set_value(index);
-                                        bar.set_hexpand(true);
-                                        row.append(&bar);
-                                        comparison_bars.append(&row);
-                                    }
-                                }
-                            }
-
+                            crate::aurelia_results::render_system(&comparison_bars, &presentation);
                             status.set_text(
                                 "Comparaison calculée ; les résultats bruts sont conservés.",
                             );
                         }
                         Err(e) => {
                             result.set_text(&e);
+                            details.set_text("");
                             while let Some(child) = comparison_bars.first_child() {
                                 comparison_bars.remove(&child);
                             }

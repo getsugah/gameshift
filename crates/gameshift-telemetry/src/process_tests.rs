@@ -144,8 +144,136 @@ fn exited_processes_and_pid_reuse_do_not_inherit_counters() {
         None
     );
     fs::remove_dir_all(f.0.join("proc/42")).unwrap();
-    assert!(tracker
-        .sample_at(&f.0, now + Duration::from_secs(2))
-        .rows
-        .is_empty());
+    assert!(
+        tracker
+            .sample_at(&f.0, now + Duration::from_secs(2))
+            .rows
+            .is_empty()
+    );
+}
+
+#[test]
+fn engine_discovery_uses_drm_cards_and_validates_individual_sysfs_counters() {
+    let f = Fixture::new();
+    for (index, pci, driver) in [
+        (17, "0000:05:00.0", "amdgpu"),
+        (42, "0000:08:00.0", "amdgpu"),
+        (4, "0000:01:00.0", "xe"),
+    ] {
+        f.gpu(pci, "0x1002", driver);
+        let path = f.0.join(format!("sys/class/drm/card{index}"));
+        fs::create_dir_all(&path).unwrap();
+        std::os::unix::fs::symlink(
+            f.0.join("sys/bus/pci/devices").join(pci),
+            path.join("device"),
+        )
+        .unwrap();
+    }
+    let discovered = crate::engines::discover_at(&f.0).unwrap();
+    assert_eq!(
+        discovered
+            .iter()
+            .map(|g| g.pci.as_str())
+            .collect::<Vec<_>>(),
+        ["0000:05:00.0", "0000:08:00.0"]
+    );
+    let counter =
+        f.0.join("sys/bus/pci/devices/0000:05:00.0/vcn_busy_percent");
+    for value in ["0", "100", "42.5"] {
+        fs::write(&counter, value).unwrap();
+        assert_eq!(
+            crate::engines::hardware_percent(&f.0, "0000:05:00.0", "vcn_busy_percent").unwrap(),
+            value.parse::<f64>().unwrap()
+        );
+    }
+    for value in ["-1", "101", "NaN", "inf", "broken"] {
+        fs::write(&counter, value).unwrap();
+        assert!(
+            crate::engines::hardware_percent(&f.0, "0000:05:00.0", "vcn_busy_percent").is_err()
+        );
+    }
+    for file in ["gpu_busy_percent", "mem_busy_percent"] {
+        fs::write(
+            f.0.join("sys/bus/pci/devices/0000:05:00.0").join(file),
+            "37",
+        )
+        .unwrap();
+        assert_eq!(
+            crate::engines::hardware_percent(&f.0, "0000:05:00.0", file).unwrap(),
+            37.
+        );
+    }
+    let readings = crate::engines::readings(&f.0, "0000:08:00.0", &Snapshot::default());
+    assert!(readings.iter().all(|r| !r.detected && r.value.is_none()));
+    assert!(!readings.iter().any(|r| r.title.contains("décodage")));
+    assert!(crate::engines::discover_at(&Fixture::new().0).is_err());
+}
+#[test]
+fn engine_tracker_uses_same_fdinfo_pass_and_keeps_absent_engines_unavailable() {
+    let f = Fixture::new();
+    let pci = "0000:05:00.0";
+    f.gpu(pci, "0x1002", "amdgpu");
+    f.process(42, 100);
+    f.info(42, 3, pci, 7, 0);
+    f.info(42, 4, pci, 7, 0);
+    let now = Instant::now();
+    let mut tracker = Tracker::default();
+    tracker.sample_at(&f.0, now);
+    f.info(42, 3, pci, 7, 2_000_000_000);
+    f.info(42, 4, pci, 7, 2_000_000_000);
+    let snapshot = tracker.sample_at(&f.0, now + Duration::from_secs(1));
+    assert_eq!(
+        snapshot.engine_activity[pci]["gfx"].milliseconds_per_second,
+        Some(2000.)
+    );
+    let readings = crate::engines::readings(&f.0, pci, &snapshot);
+    assert_eq!(readings[0].value, Some(2000.));
+    assert!(readings[1..].iter().all(|r| r.value.is_none()));
+    tracker.pause();
+    assert_eq!(
+        tracker
+            .sample_at(&f.0, now + Duration::from_secs(2))
+            .engine_activity[pci]["gfx"]
+            .milliseconds_per_second,
+        None
+    );
+}
+
+#[test]
+fn hardware_video_percentage_has_distinct_zero_missing_and_impossible_states() {
+    use crate::engines::{State, readings};
+    let f = Fixture::new();
+    let pci = "0000:05:00.0";
+    f.gpu(pci, "0x1002", "amdgpu");
+    let path =
+        f.0.join("sys/bus/pci/devices")
+            .join(pci)
+            .join("vcn_busy_percent");
+    let read = || readings(&f.0, pci, &Snapshot::default()).pop().unwrap();
+    assert_eq!(read().state, State::Unavailable);
+    for (text, expected) in [("0", 0.), ("8.2", 8.2), ("100", 100.)] {
+        fs::write(&path, text).unwrap();
+        let value = read();
+        assert_eq!(value.state, State::Available);
+        assert!(value.percent);
+        assert_eq!(value.value, Some(expected));
+    }
+    for value in ["100.1", "200", "-0.1", "NaN", "inf", "not a number"] {
+        fs::write(&path, value).unwrap();
+        let value = read();
+        assert_eq!(value.state, State::Impossible);
+        assert_eq!(value.value, None);
+    }
+    fs::remove_file(&path).unwrap();
+    assert_eq!(read().state, State::Unavailable);
+    // The global GPU busy source must never be relabelled as independent GFX or compute.
+    fs::write(
+        f.0.join("sys/bus/pci/devices")
+            .join(pci)
+            .join("gpu_busy_percent"),
+        "83",
+    )
+    .unwrap();
+    let missing = readings(&f.0, pci, &Snapshot::default());
+    assert!(missing[..3].iter().all(|r| !r.percent && r.value.is_none()));
 }

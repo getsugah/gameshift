@@ -17,7 +17,7 @@ Son moteur de benchmark, **Aurelia**, permet de mesurer les performances et de
 comparer les résultats. Des profils permettent également de gérer les réglages
 pris en charge par les cartes AMD Radeon.
 
-Version actuelle : **0.5.0-alpha.2**, expérimentale.
+Version actuelle : **0.5.0-alpha.2**, édition du 14 novembre 2026, expérimentale.
 
 ## Fonctionnalités
 
@@ -36,13 +36,13 @@ Les mesures restent locales. Aucun compte ni envoi automatique de données.
 
 ## Téléchargement et lancement
 
-Télécharger l’[AppImage x86_64 et son SHA-256](https://github.com/getsugah/gameshift/releases/tag/v0.5.0-alpha.2), puis
+Télécharger l’[AppImage x86_64 et son SHA-256](https://github.com/getsugah/gameshift/releases/tag/v0.5.0-alpha.2-20261114), puis
 exécuter ces commandes dans le dossier de téléchargement :
 
 ```sh
-sha256sum -c GameShift-0.5.0-alpha.2-x86_64.AppImage.sha256
-chmod +x GameShift-0.5.0-alpha.2-x86_64.AppImage
-./GameShift-0.5.0-alpha.2-x86_64.AppImage
+sha256sum -c GameShift-0.5.0-alpha.2-20261114-x86_64.AppImage.sha256
+chmod +x GameShift-0.5.0-alpha.2-20261114-x86_64.AppImage
+./GameShift-0.5.0-alpha.2-20261114-x86_64.AppImage
 ```
 
 L’AppImage nécessite **glibc ≥ 2.41**, des pilotes graphiques fonctionnels et

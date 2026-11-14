@@ -1,0 +1,22 @@
+{
+  "version": "0.5.0-alpha.2",
+  "distribution": "20261114",
+  "rust_tests_passed": 198,
+  "rust_tests_ignored": 7,
+  "private_path_and_token_scan": "passed",
+  "cryptographic_markers": "unchanged reviewed Debian GnuTLS test vectors and libssh2 format delimiter; exact binary hashes verified",
+  "artifact_checksums": "passed",
+  "binary_and_library_hashes": "passed",
+  "native_library_inventory": "95 matched against previous reviewed Debian inventory",
+  "read_only_smoke_checks": [
+    "--diagnose-json",
+    "--controls-json",
+    "--community-diagnostic-json",
+    "--system-bench --plan",
+    "--profiles --version"
+  ],
+  "historical_aurelia_sources": "8 unchanged",
+  "hardware_validated": false,
+  "graphical_tests_run": false,
+  "git_history_exported": false
+}

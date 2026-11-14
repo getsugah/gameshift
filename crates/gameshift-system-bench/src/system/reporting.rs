@@ -25,7 +25,8 @@ fn label(id: &str) -> &str {
 }
 pub fn validate(s: &Session) -> Result<(), String> {
     let body = s.system.as_ref().ok_or("Rapport système absent")?;
-    if s.schema_version != 2 || s.protocol != PROTOCOL || body.protocol != PROTOCOL {
+    let storage = s.schema_version == 3 && s.protocol == super::scoring::PROTOCOL && body.protocol == super::scoring::PROTOCOL;
+    if !storage && (s.schema_version != 2 || s.protocol != PROTOCOL || body.protocol != PROTOCOL) {
         return Err("Version du protocole système incompatible".into());
     }
     if !s.elapsed_seconds.is_finite() || s.elapsed_seconds < 0. || !body.overrun_seconds.is_finite()
@@ -33,7 +34,8 @@ pub fn validate(s: &Session) -> Result<(), String> {
         return Err("Durée système invalide".into());
     }
     let ids: BTreeSet<_> = body.categories.iter().map(|c| c.id.as_str()).collect();
-    if body.categories.len() != 7 || ids != IDS.into_iter().collect() || s.metrics.len() > 256 {
+    let expected: BTreeSet<_> = IDS.into_iter().chain(storage.then_some("storage")).collect();
+    if body.categories.len() != expected.len() || ids != expected || s.metrics.len() > 256 {
         return Err("Le rapport doit contenir les sept catégories avec leur état".into());
     }
     for c in &body.categories {
@@ -74,6 +76,15 @@ pub fn validate(s: &Session) -> Result<(), String> {
         .collect();
     if metrics != nested || metrics.len() != s.metrics.len() {
         return Err("Mesures de catégories incohérentes".into());
+    }
+    if storage {
+        let flat = serde_json::to_value(&s.metrics).map_err(|e|e.to_string())?;
+        let nested = serde_json::to_value(body.categories.iter().flat_map(|c|c.metrics.iter()).collect::<Vec<_>>()).map_err(|e|e.to_string())?;
+        if flat != nested { return Err("Mesures originales et catégories différentes".into()); }
+        let computed = serde_json::to_value(super::scoring::calculate(s)).map_err(|e|e.to_string())?;
+        if body.parameters["rate_scores"] != computed || body.parameters["score_version"] != super::scoring::VERSION {
+            return Err("Formules ou scores enregistrés incohérents avec les mesures brutes".into());
+        }
     }
     Ok(())
 }
@@ -152,6 +163,12 @@ fn driver_controls_text(snapshot: &serde_json::Value) -> String {
 }
 pub fn individual(s: &Session) -> String {
     let mut out=format!("AURELIA — RAPPORT INDIVIDUEL\n{}\nProtocole : {} · GameShift {}\nDurée réelle : {:.2} s\nNoyau : {} · Architecture : {}\nCPU : {}\nMicrocode : {}\nGouverneur : {} · EPP : {}\nMoteur SHA-256 : {}\nAuxiliaire SHA-256 : {}\n",s.fingerprint.distribution,s.protocol,s.application_version,s.elapsed_seconds,s.fingerprint.kernel.as_deref().unwrap_or("Indisponible"),s.fingerprint.architecture,s.fingerprint.cpu_model.as_deref().unwrap_or("Indisponible"),s.fingerprint.microcode.as_deref().unwrap_or("Indisponible"),policies(&s.fingerprint.governors),policies(&s.fingerprint.energy_preferences),s.fingerprint.engine_sha256,s.fingerprint.helper_sha256);
+    if s.protocol == super::scoring::PROTOCOL {
+        let points=super::scoring::calculate(s);
+        out.push_str(&format!("\nPOINTS AURELIA · {}\n{}\n",points.version,points.method));
+        for (id, value) in &points.categories { out.push_str(&format!("{id} : {} points\n",value.map(|v|format!("{v:.3}")).unwrap_or_else(||"Indisponible".into()))); }
+        out.push_str(&format!("Global : {}\n",points.global.map(|v|format!("{v:.3} points")).unwrap_or_else(||"Indisponible : quatre catégories requises".into())));
+    }
     if let Some(body) = &s.system {
         if body.parameters["driver_controls_changed"] == true {
             out.push_str("\nLes réglages du pilote diffèrent entre le début et la fin du test. Les instantanés sont conservés ; cela ne prouve pas une cause de variation des performances.\n");
@@ -325,14 +342,14 @@ fn geo(values: &[f64]) -> Option<f64> {
         Some((values.iter().map(|v| v.ln()).sum::<f64>() / values.len() as f64).exp())
     }
 }
-fn metric_key(m: &Metric, across_hardware: bool) -> String {
+pub(crate) fn metric_key(m: &Metric, across_hardware: bool) -> String {
     if across_hardware && m.id.starts_with("cpu/multi_sustained/") {
         "cpu/multi_sustained/available".into()
     } else {
         m.id.clone()
     }
 }
-fn work(m: &Metric, across_hardware: bool) -> String {
+pub(crate) fn work(m: &Metric, across_hardware: bool) -> String {
     if !across_hardware {
         return m.work_description.clone();
     }
@@ -378,7 +395,7 @@ pub fn compare_with_hardware(
 ) -> Result<Scores, String> {
     a.validate()?;
     b.validate()?;
-    if a.protocol != PROTOCOL || b.protocol != PROTOCOL {
+    if a.protocol != b.protocol || ![PROTOCOL, super::scoring::PROTOCOL].contains(&a.protocol.as_str()) {
         return Err("Ne pas comparer le protocole complet à un ancien parcours partiel".into());
     }
     let aa = &a.fingerprint;
@@ -566,6 +583,18 @@ pub fn compare_text_with_hardware(
         })
     };
     let mut out=format!("{} (A = 100) / {} (B)\nIndice natif complet : {}\nIndice applicatif : {}\nSynthèse complète : {}\n",a.fingerprint.distribution,b.fingerprint.distribution,display(scores.native),display(scores.application),display(scores.synthesis));
+    if a.protocol == super::scoring::PROTOCOL {
+        let pa=super::scoring::calculate(a);let pb=super::scoring::calculate(b);
+        out.push_str(&format!("\nPOINTS AURELIA · {}\n", super::scoring::VERSION));
+        let mut all=true;
+        for id in ["cpu","gpu","ram","storage"] {
+            if super::scoring::compatible(a,b,id,across_hardware) {
+                if let (Some(x),Some(y))=(pa.categories[id],pb.categories[id]) {out.push_str(&format!("{id} : {x:.3} → {y:.3} points · {:+.3} pts · {:+.2} %\n",y-x,100.*(y/x-1.)));continue;}
+            }
+            all=false;out.push_str(&format!("{id} : comparaison de points indisponible\n"));
+        }
+        if all { if let (Some(x),Some(y))=(pa.global,pb.global) {out.push_str(&format!("Global : {x:.3} → {y:.3} points · {:+.3} pts · {:+.2} %\n",y-x,100.*(y/x-1.)));} }
+    }
     out.push_str(&format!("Version des indices : {SCORE_VERSION}\n"));
     for (id, index) in &scores.categories {
         out.push_str(&format!("{} : {}", label(id), display(*index)));

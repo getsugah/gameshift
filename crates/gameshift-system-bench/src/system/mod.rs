@@ -6,6 +6,8 @@ pub mod evaluation;
 pub mod gpu;
 pub mod ram;
 pub mod reporting;
+pub mod scoring;
+pub mod storage;
 pub const PROTOCOL: &str = "aurelia-system-v2";
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]

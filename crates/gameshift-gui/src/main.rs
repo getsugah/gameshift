@@ -1,6 +1,13 @@
 //! Desktop diagnostics and a headless JSON export using the same collector.
 use adw::prelude::*;
 mod amd_controls;
+mod aurelia_results;
+mod aurelia_dashboard;
+mod gloss_card;
+#[cfg(test)]
+mod aurelia_visual_tests;
+mod hardware_colors;
+mod workspace_nav;
 mod bench_process;
 mod benchmark;
 mod benchmark_dashboard;
@@ -17,6 +24,12 @@ mod live_chart;
 mod live_cpu;
 mod live_gpu;
 mod live_settings;
+mod home_sensors;
+mod home_fan;
+#[cfg(test)]
+mod sensor_discovery_tests;
+mod overview;
+mod overview_capture;
 mod presentation;
 mod profiles_page;
 mod system_lab;
@@ -167,6 +180,13 @@ fn main() -> glib::ExitCode {
             }
         };
     }
+    if overview_capture::requested() {
+        let directory = std::env::args_os()
+            .nth(2)
+            .map(std::path::PathBuf::from)
+            .unwrap_or_else(|| std::path::PathBuf::from("/tmp/gameshift-home-capture"));
+        return overview_capture::run(directory);
+    }
     if std::env::args().any(|arg| arg == "--ui-smoke") {
         let directory = std::env::args_os()
             .nth(2)
@@ -231,7 +251,9 @@ fn build_ui(app: &adw::Application) {
         window.present();
         return;
     }
-    profiles_page::session_open();
+    if !overview_capture::requested() {
+        profiles_page::session_open();
+    }
     live_settings::initialize();
     let provider = gtk::CssProvider::new();
     provider.load_from_data(include_str!("style.css"));
@@ -250,78 +272,27 @@ fn build_ui(app: &adw::Application) {
         .width_request(640)
         .height_request(560)
         .build();
-    let root = gtk::Box::new(gtk::Orientation::Horizontal, 0);
-    let sidebar = gtk::Box::new(gtk::Orientation::Vertical, 12);
-    sidebar.add_css_class("gs-sidebar");
-    sidebar.set_width_request(180);
-    let brand = gtk::Label::new(Some("GameShift"));
-    brand.add_css_class("gs-brand");
-    brand.set_halign(gtk::Align::Start);
-    brand.set_margin_start(26);
-    brand.set_margin_top(34);
-    sidebar.append(&brand);
-    let subtitle = gtk::Label::new(Some("Votre machine, en clair."));
-    subtitle.add_css_class("gs-sidebar-note");
-    subtitle.set_halign(gtk::Align::Start);
-    subtitle.set_margin_start(26);
-    subtitle.set_margin_bottom(24);
-    sidebar.append(&subtitle);
+    let root = gtk::Box::new(gtk::Orientation::Vertical, 0);
     let stack = gtk::Stack::new();
+    stack.set_widget_name("gameshift-workspace");
     stack.set_hhomogeneous(false);
     stack.set_vhomogeneous(false);
     stack.set_hexpand(true);
     stack.set_vexpand(true);
-    stack.set_transition_type(gtk::StackTransitionType::Crossfade);
-    stack.set_transition_duration(160);
-    let navigation = gtk::Box::new(gtk::Orientation::Vertical, 6);
-    navigation.set_vexpand(true);
-    let mut first = None;
-    for (name, title) in [
-        ("overview", "Accueil"),
-        ("Carte graphique", "GPU"),
-        ("Processeur", "CPU"),
-        ("laboratory", "Benchmarks"),
-        ("profiles", "Profils"),
-        ("settings", "Paramètres"),
-    ] {
-        let button = gtk::ToggleButton::with_label(title);
-        button.set_group(first.as_ref());
-        if first.is_none() {
-            first = Some(button.clone());
-            button.set_active(true);
-        }
-        let weak = stack.downgrade();
-        button.connect_clicked(move |_| {
-            if let Some(stack) = weak.upgrade() {
-                stack.set_visible_child_name(name);
-            }
-        });
-        let weak = button.downgrade();
-        stack.connect_visible_child_name_notify(move |stack| {
-            if let Some(button) = weak.upgrade() {
-                let selected = stack.visible_child_name();
-                let selected = match selected.as_deref() {
-                    Some("Système" | "Mémoire" | "Stockage") => Some("overview"),
-                    other => other,
-                };
-                button.set_active(selected == Some(name));
-            }
-        });
-        navigation.append(&button);
-    }
-    sidebar.append(&navigation);
-    let badge = gtk::Label::new(Some("Diagnostic & mesures"));
-    badge.add_css_class("gs-sidebar-note");
-    badge.set_margin_bottom(24);
-    sidebar.append(&badge);
-    root.append(&sidebar);
+    stack.set_transition_type(gtk::StackTransitionType::None);
+    stack.set_transition_duration(0);
+    let sidebar=workspace_nav::sidebar(&stack);
+    let navigation=workspace_nav::top(&stack);
+    let workspace=gtk::Box::new(gtk::Orientation::Horizontal,0);
+    workspace.set_vexpand(true);workspace.append(&sidebar);
 
     let layout = gtk::Box::new(gtk::Orientation::Vertical, 0);
     layout.add_css_class("gs-content");
     layout.set_hexpand(true);
     let header = adw::HeaderBar::new();
     header.add_css_class("flat");
-    let title = gtk::Label::new(Some("Vue matérielle"));
+    let title = gtk::Label::new(Some("Accueil"));
+    title.set_widget_name("gameshift-window-title");
     title.add_css_class("dim-label");
     header.set_title_widget(Some(&title));
     let title_weak = title.downgrade();
@@ -346,7 +317,9 @@ fn build_ui(app: &adw::Application) {
         .build();
     refresh.add_css_class("flat");
     header.pack_start(&refresh);
-    layout.append(&header);
+    root.append(&header);
+    root.append(&navigation);
+    root.append(&workspace);
     layout.append(&stack);
     let status = gtk::Label::new(Some("Prêt pour le diagnostic"));
     status.add_css_class("gs-status");
@@ -354,8 +327,62 @@ fn build_ui(app: &adw::Application) {
     status.set_margin_top(10);
     status.set_margin_bottom(14);
     layout.append(&status);
-    root.append(&layout);
-    window.set_content(Some(&root));
+    let atmosphere = gtk::Overlay::new();
+    let backdrop=overview::backdrop(None);
+    atmosphere.add_css_class("gs-workspace-surface");
+    atmosphere.set_child(Some(&backdrop));
+    let weak_backdrop=backdrop.downgrade();
+    stack.connect_visible_child_name_notify(move|stack|{if let Some(backdrop)=weak_backdrop.upgrade(){backdrop.set_visible(stack.visible_child_name().as_deref()!=Some("laboratory"));}});
+    atmosphere.add_overlay(&layout);
+    atmosphere.set_measure_overlay(&layout, true);
+    atmosphere.set_hexpand(true);
+    atmosphere.set_vexpand(true);
+    workspace.append(&atmosphere);
+    let adaptive = adw::BreakpointBin::new();
+    adaptive.set_size_request(640, 560);
+    adaptive.set_child(Some(&root));
+    let large = adw::Breakpoint::new(adw::BreakpointCondition::new_length(
+        adw::BreakpointConditionLengthType::MinWidth,
+        1800.,
+        adw::LengthUnit::Px,
+    ));
+    large.add_setter(&sidebar, "width-request", Some(&230i32.to_value()));
+    let weak = root.downgrade();
+    large.connect_apply(move |_| {
+        if let Some(root) = weak.upgrade() {
+            root.add_css_class("gs-density-large");
+        }
+    });
+    let weak = root.downgrade();
+    large.connect_unapply(move |_| {
+        if let Some(root) = weak.upgrade() {
+            root.remove_css_class("gs-density-large");
+        }
+    });
+    adaptive.add_breakpoint(large);
+    window.set_content(Some(&adaptive));
+    root.add_css_class("gs-home-shell");
+    root.add_css_class("gs-app-shell");
+    header.set_visible(true);
+    let refresh_action = gtk::gio::SimpleAction::new("refresh-diagnostic", None);
+    let home_refresh = refresh.downgrade();
+    refresh_action.connect_activate(move |_, _| {
+        if let Some(button) = home_refresh.upgrade() {
+            if button.is_sensitive() {
+                button.emit_clicked();
+            }
+        }
+    });
+    app.add_action(&refresh_action);
+    title.set_visible(true);
+    status.set_visible(false);
+    let home_status = status.downgrade();
+    stack.connect_visible_child_name_notify(move |stack| {
+        let home = stack.visible_child_name().as_deref() == Some("overview");
+        if let Some(status) = home_status.upgrade() {
+            status.set_visible(!home && stack.visible_child_name().as_deref()!=Some("laboratory"));
+        }
+    });
     let stack_weak = stack.downgrade();
     let status_weak = status.downgrade();
     refresh.connect_clicked(move |button| {
@@ -373,7 +400,7 @@ fn build_ui(app: &adw::Application) {
     });
     app.add_action(&edit);
     window.connect_close_request(|_| {
-        if !profiles_page::keep_tray_on_close() {
+        if !overview_capture::requested() && !profiles_page::keep_tray_on_close() {
             std::thread::spawn(|| {
                 let _ =
                     gameshift_profiles::call(serde_json::json!({"command":"tray","visible":false}));
@@ -478,12 +505,14 @@ fn render_snapshot(
 
 fn settings_page() -> gtk::ScrolledWindow {
     let content = gtk::Box::new(gtk::Orientation::Vertical, 18);
+    content.add_css_class("gs-unified-page");
     content.set_margin_top(20);
     content.set_margin_bottom(24);
     content.set_margin_start(20);
     content.set_margin_end(20);
     content.append(&live_settings::appearance());
     content.append(&live_settings::preferences());
+    content.append(&home_sensors::preferences());
     content.append(&community::panel());
     let compatibility = adw::PreferencesGroup::new();
     compatibility.set_title("Compatibilité et diagnostic");
@@ -497,12 +526,9 @@ fn settings_page() -> gtk::ScrolledWindow {
         let row=adw::ActionRow::new();row.set_title(title);row.set_subtitle(description);row.set_subtitle_lines(0);compatibility.add(&row);
     }
     content.append(&compatibility);
-    let clamp = adw::Clamp::builder()
-        .maximum_size(1100)
-        .child(&content)
-        .build();
+    content.set_hexpand(true);
     gtk::ScrolledWindow::builder()
         .hscrollbar_policy(gtk::PolicyType::Never)
-        .child(&clamp)
+        .child(&content)
         .build()
 }

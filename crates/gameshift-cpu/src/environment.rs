@@ -8,6 +8,8 @@ pub struct Temperature {
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Snapshot {
+    #[serde(skip)]
+    pub package_power: Option<crate::power::Reading>,
     pub unix_time_ms: Option<u128>,
     pub frequency_khz: BTreeMap<usize, Option<u64>>,
     pub temperatures: Vec<Temperature>,
@@ -20,6 +22,81 @@ pub struct Environment {
     pub after: Snapshot,
     pub cpu_busy_percent_over_case: BTreeMap<String, Option<f64>>,
     pub system_busy_outside_process_percent: Option<f64>,
+}
+#[derive(Default)]
+pub struct TemperatureSampler {
+    cache: gameshift_core::discovery::Cache<Vec<(std::path::PathBuf, Temperature)>>,
+}
+impl TemperatureSampler {
+    pub fn sample_at(
+        &mut self,
+        root: &std::path::Path,
+        now: std::time::Instant,
+    ) -> Vec<Temperature> {
+        let sensors = self.cache.get(root, now, |root| {
+            let mut sensors = Vec::new();
+            let mut watched = vec![root.join("sys/class/hwmon")];
+            if let Ok(entries) = fs::read_dir(root.join("sys/class/hwmon")) {
+                for entry in entries.flatten() {
+                    let path = entry.path();
+                    watched.push(path.clone());
+                    let name = fs::read_to_string(path.join("name")).unwrap_or_default();
+                    if !matches!(
+                        name.trim(),
+                        "k10temp" | "coretemp" | "zenpower" | "cpu_thermal"
+                    ) {
+                        continue;
+                    }
+                    if let Ok(inputs) = fs::read_dir(&path) {
+                        for sensor in inputs.flatten() {
+                            let file = sensor.file_name().to_string_lossy().into_owned();
+                            if !file.starts_with("temp") || !file.ends_with("_input") {
+                                continue;
+                            }
+                            let label =
+                                fs::read_to_string(path.join(file.replace("_input", "_label")))
+                                    .unwrap_or_else(|_| file.clone());
+                            sensors.push((
+                                sensor.path(),
+                                Temperature {
+                                    source: format!("{}/{}", name.trim(), label.trim()),
+                                    celsius: 0.,
+                                },
+                            ));
+                        }
+                    }
+                }
+            }
+
+            (sensors, watched)
+        });
+        let mut failed = false;
+        let values = sensors
+            .iter()
+            .filter_map(|(path, sensor)| {
+                let value = fs::read_to_string(path)
+                    .ok()
+                    .and_then(|s| s.trim().parse::<f64>().ok())
+                    .filter(|v| v.is_finite() && (-40_000. ..=150_000.).contains(v));
+                failed |= value.is_none();
+                value.map(|v| Temperature {
+                    source: sensor.source.clone(),
+                    celsius: v / 1000.,
+                })
+            })
+            .collect();
+        self.cache.failed(failed);
+        values
+    }
+}
+fn temperatures(root: &std::path::Path) -> Vec<Temperature> {
+    static SAMPLER: std::sync::OnceLock<std::sync::Mutex<TemperatureSampler>> =
+        std::sync::OnceLock::new();
+    SAMPLER
+        .get_or_init(Default::default)
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .sample_at(root, std::time::Instant::now())
 }
 impl Snapshot {
     pub fn read(cpus: &[usize]) -> Self {
@@ -36,41 +113,7 @@ impl Snapshot {
                 )
             })
             .collect();
-        let mut temperatures = Vec::new();
-        if let Ok(entries) = fs::read_dir("/sys/class/hwmon") {
-            for entry in entries.flatten() {
-                let path = entry.path();
-                let name = fs::read_to_string(path.join("name")).unwrap_or_default();
-                if !matches!(
-                    name.trim(),
-                    "k10temp" | "coretemp" | "zenpower" | "cpu_thermal"
-                ) {
-                    continue;
-                }
-                if let Ok(sensors) = fs::read_dir(&path) {
-                    for sensor in sensors.flatten() {
-                        let file = sensor.file_name().to_string_lossy().into_owned();
-                        if !file.starts_with("temp") || !file.ends_with("_input") {
-                            continue;
-                        }
-                        let value = fs::read_to_string(sensor.path())
-                            .ok()
-                            .and_then(|s| s.trim().parse::<f64>().ok());
-                        if let Some(value) =
-                            value.filter(|v| v.is_finite() && (-40_000. ..=150_000.).contains(v))
-                        {
-                            let label =
-                                fs::read_to_string(path.join(file.replace("_input", "_label")))
-                                    .unwrap_or_else(|_| file.clone());
-                            temperatures.push(Temperature {
-                                source: format!("{}/{}", name.trim(), label.trim()),
-                                celsius: value / 1000.,
-                            });
-                        }
-                    }
-                }
-            }
-        }
+        let temperatures = temperatures(std::path::Path::new("/"));
         let cpu_ticks = parse_cpu_ticks(&fs::read_to_string("/proc/stat").unwrap_or_default());
         let process_cpu_ticks = fs::read_to_string("/proc/self/stat").ok().and_then(|s| {
             let fields = s.rsplit_once(')')?.1.split_whitespace().collect::<Vec<_>>();
@@ -81,6 +124,7 @@ impl Snapshot {
                 .checked_add(fields.get(12)?.parse::<u64>().ok()?)
         });
         Self {
+            package_power: None,
             unix_time_ms: std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .ok()

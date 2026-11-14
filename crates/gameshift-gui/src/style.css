@@ -45,3 +45,370 @@ preferencesgroup row { min-height: 48px; }
 .gs-gpu-chart { color: #239b89; }
 .gs-gpu-action { border: 1px solid alpha(#49cdb6, 0.50); background: alpha(#49cdb6, 0.12); }
 .gs-gpu-lab-group { padding-top: 10px; border-top: 1px solid alpha(@window_fg_color, 0.10); }
+
+/* Home reference, scoped to overview only. Accent colors are identity, not thresholds. */
+.gs-home-shell, .gs-home-shell .gs-content, .gs-home-scroll { background: #050e15; color: #f1f7fa; }
+.gs-home-shell headerbar { min-height: 34px; padding: 2px 8px; background: linear-gradient(100deg,#0a2630,#050e15); color: #dceef4; border-bottom: 1px solid #21596a; box-shadow: none; }
+.gs-home-shell headerbar button { min-height: 20px; min-width: 20px; padding: 2px; color: #dceef4; }
+.gs-home-shell .gs-sidebar { min-width: 178px; background: linear-gradient(125deg,#050d14,#091a26); border-right: 1px solid #167381; }
+.gs-home-shell .gs-brand { font-size: 21px; color: #f5fbff; text-shadow: 0 0 12px alpha(#0fe0d7,0.16); }
+.gs-home-shell .gs-sidebar .gs-home-icon { color: #00e4dc; }
+.gs-home-shell .gs-sidebar-note { font-size: 10px; color: #bacdd2; opacity: 1; }
+.gs-home-shell .gs-sidebar > box > button { margin: 2px 10px; min-height: 32px; padding: 4px 8px; border-radius: 7px; border: 1px solid transparent; background: transparent; color: #eaf3f7; font-size: 13px; }
+.gs-home-shell .gs-sidebar > box > button:checked { border-color: #18efe4; color: white; background: linear-gradient(180deg,#057d85,#06333b); box-shadow: inset 0 1px 5px alpha(#3affef,0.55), 0 0 7px alpha(#00d7d4,0.24); }
+.gs-home-shell .gs-sidebar > box > button:hover { background: #0b3944; border-color: #28b4b7; }
+.gs-home-shell .gs-sidebar > box > button:active { background: #03636c; }
+.gs-home { color: #f2f7fa; }
+.gs-home-title { font-size: 28px; font-weight: 800; letter-spacing: -0.8px; margin-bottom: -5px; }
+.gs-home-subtitle { font-size: 11px; color: #d2dde3; }
+.gs-home-summary { padding: 6px 10px; border: 1px solid #21596a; border-radius: 13px; background: linear-gradient(150deg,#0b202c,#050e15); }
+.gs-home-card { padding: 10px; border-radius: 13px; border: 1px solid #187f8b; background: linear-gradient(140deg,#0a2630,#050e15); box-shadow: inset 0 1px 0 alpha(#2ce5dd,0.22), 0 0 5px alpha(#00c7c7,0.09); }
+.gs-home-heading { font-size: 16px; font-weight: 800; color: #f4f8fa; }
+.gs-home-hardware { border-top-color: #12dfd8; }
+.gs-home-gpu { border-top: 2px solid #ffad32; box-shadow: inset 0 2px 5px alpha(#ffa320,0.12), 0 0 5px alpha(#ffae38,0.1); }
+.gs-home-caption { font-size: 10px; color: #bacbd2; }
+.gs-home-number { font-size: 17px; font-weight: 750; color: #f5fafc; letter-spacing: -0.3px; }
+.gs-home-icon, .gs-home-teal, .gs-home-profile { color: #06ddd5; }
+.gs-home-profile, .gs-home-teal { font-size: 14px; font-weight: 750; }
+.gs-home-gauge-value { font-size: 20px; font-weight: 800; color: white; }
+.gs-home-temperature .gs-home-number { color: #ffae31; }
+.gs-home-temperature .gs-home-icon { color: #ffc05b; }
+.gs-home-unavailable .gs-home-number { color: #8ea6af; }
+.gs-home-unavailable .gs-home-gauge-value { color: #b1c4cb; }
+.gs-home-action { border: 1px solid #06e0d9; background: linear-gradient(180deg,#0a6470,#071b24); color: white; padding: 9px 10px; border-radius: 8px; box-shadow: inset 0 1px 3px alpha(#35fff0,0.3), 0 1px 3px alpha(black,0.4); }
+.gs-home-action:hover { background: linear-gradient(180deg,#138795,#0b3943); border-color: #80fff3; box-shadow: inset 0 1px 4px alpha(#81fff1,0.5), 0 0 6px alpha(#0ce0d4,0.18); }
+.gs-home-action:active { background: #064450; box-shadow: inset 0 2px 4px alpha(black,0.5); }
+.gs-home-action:disabled, .gs-home-detail-action:disabled, .gs-home-chip:disabled { opacity: 0.42; box-shadow: none; }
+.gs-home-action:focus-visible, .gs-home-chip:focus-visible, .gs-home-metric-button:focus-visible, .gs-home-detail-action:focus-visible { outline: 2px solid #9cfff3; outline-offset: 2px; }
+.gs-home-button-title { font-size: 13px; font-weight: 750; }
+.gs-home-aurelia { border-color: #d58cff; background: linear-gradient(180deg,#71429a,#20162e); box-shadow: inset 0 1px 4px alpha(#e9a2ff,0.45), 0 0 5px alpha(#aa50eb,0.17); }
+.gs-home-aurelia:hover { background: linear-gradient(180deg,#9254be,#40234e); border-color: #f0c5ff; }
+.gs-home-aurelia:active { background: #422351; }
+.gs-home-identity { padding: 2px 4px; background: transparent; border: none; box-shadow: none; }
+.gs-home-identity .gs-home-button-title { font-size: 14px; }
+.gs-home-chip { padding: 2px 10px; border-left: 1px solid #41636e; border-radius: 0; background: transparent; color: white; box-shadow: none; }
+.gs-home-chip:hover { background: alpha(#08c7bf,0.1); }
+.gs-home-profile-unavailable { color: #a9bcc4; }
+.gs-home-live-state { font-size: 11px; color: #21dbd0; }
+.gs-home-chart { color: #00e2d9; background: linear-gradient(180deg,alpha(#00dfdc,0.07),alpha(#00232b,0.06)); }
+.gs-home-gpu .gs-home-chart { color: #ffb52f; }
+.gs-home-detail-action { color: #a8e8e2; padding: 2px 5px; min-height: 18px; border: 1px solid #326370; background: linear-gradient(180deg,#123743,#07141e); border-radius: 5px; font-size: 10px; }
+.gs-home-detail-action:hover { background: #15515c; border-color: #31e3dc; color: white; }
+.gs-home-detail-action:active { background: #092f39; }
+.gs-home-bar trough { background: #273e4b; border-radius: 6px; min-height: 7px; }
+.gs-home-bar progress { background: linear-gradient(180deg,#27f7e7,#00a5b7); border-radius: 6px; min-height: 7px; }
+.gs-home-gpu .gs-home-bar progress, .gs-home-metric-amber .gs-home-bar progress { background: linear-gradient(180deg,#ffd066,#f3910d); }
+.gs-home-metric-button { padding: 6px; background: linear-gradient(135deg,#0a2632,#07141e); border: 1px solid #244c5c; border-radius: 8px; }
+.gs-home-metric-button:hover { background: #103d48; border-color: #0fe0d4; }
+.gs-home-metric-button:active { background: #07505a; }
+.gs-home flowboxchild { padding: 0; }
+.gs-home-processes { font-size: 11px; color: #c6d8de; }
+.gs-home-benchmark { border-color: #217c8b; }
+.gs-home-aurelia-art { border-radius: 8px; border: 1px solid #544268; }
+.gs-home-result { font-size: 25px; font-weight: 800; color: white; }
+.gs-home-banner { padding: 8px 12px; background: linear-gradient(130deg,#241b39,#111126); }
+.gs-home-banner .gs-home-button-title { font-size: 23px; }
+.gs-home-banner-command { margin-right: 8px; padding: 7px 12px; border: 1px solid #cd8cf3; border-radius: 7px; background: linear-gradient(180deg,#55316e,#211b32); color: white; font-size: 13px; font-weight: 750; }
+.gs-home-sources { font-size: 10px; color: #9cb5c0; }
+.gs-home-memory-detail { font-size: 9px; color: #a9c0c9; }
+.gs-home-summary .gs-home-caption { font-size: 9px; }
+.gs-home-summary .gs-home-chip { min-width: 85px; }
+.gs-home-summary .gs-home-chip .gs-home-caption { font-size: 10px; }
+.gs-home-summary .gs-home-identity .gs-home-button-title { font-size: 12px; }
+.gs-home-summary .gs-home-identity .gs-home-caption { font-size: 9px; }
+.gs-home-banner .gs-home-caption { color: #e4d8f4; }
+.gs-home windowcontrols button { min-height: 20px; min-width: 20px; padding: 2px; color: #dceff4; }
+.gs-home-banner { background: linear-gradient(130deg,#20172e 0%,#312047 28%,#552b79 29%,#1b1730 40%,#622d87 42%,#21182f 60%,#131a30 85%,#342049 100%); }
+.gs-home-banner .gs-home-icon { color: #cc85f5; }
+.gs-home-summary .gs-home-chip .gs-home-icon { color: #08dcd3; }
+/* Adwaita's default progress trough minimum otherwise forces four tiles to overflow. */
+.gs-home-bar, .gs-home-bar progress { min-width: 0; }
+.gs-home-bar trough { min-width: 40px; }
+
+/* Only the home viewport is transparent over the static atmospheric backdrop. */
+.gs-home-scroll, .gs-home-scroll > viewport { background: transparent; }
+
+/* Shared GameShift identity. Existing page layouts and safety states are retained. */
+.gs-app-shell { color: #f1f7fa; }
+.gs-app-shell .gs-content, .gs-app-shell scrolledwindow, .gs-app-shell viewport, .gs-app-shell headerbar { background: transparent; }
+.gs-unified-page .gs-page-title, .gs-unified-page .gs-gpu-title { color: #f4fafc; font-size: 30px; font-weight: 800; }
+.gs-unified-page .gs-page-caption, .gs-unified-page .gs-card-detail, .gs-unified-page .gs-gpu-caption { color: #b6cbd4; opacity: 1; }
+.gs-unified-page .gs-source, .gs-unified-page .gs-status { color: #a4c1ca; opacity: 1; }
+.gs-unified-page .gs-section-title, .gs-unified-page .heading { color: #f2f8fa; }
+.gs-unified-page .gs-card, .gs-unified-page .gs-summary-card, .gs-unified-page .gs-info-panel, .gs-unified-page .gs-gpu-surface, .gs-unified-page .gs-gpu-tile, .gs-unified-page .gs-gpu-hero, .gs-unified-page .gs-technical, .gs-unified-page .boxed-list { background: linear-gradient(140deg,#0a2630,#050e15); border: 1px solid #187f8b; box-shadow: inset 0 1px 0 alpha(#2ce5dd,0.18), 0 0 5px alpha(#00c7c7,0.07); color: #edf5f8; }
+.gs-unified-page .gs-gpu-hero { border-top: 2px solid #ffad32; }
+.gs-unified-page .gs-gpu-number, .gs-unified-page .gs-card-value, .gs-unified-page .gs-summary-value { color: #f4fafc; font-weight: 750; }
+.gs-unified-page .gs-gpu-signal, .gs-unified-page .gs-card-icon, .gs-unified-page .gs-gpu-chart { color: #06ddd5; }
+.gs-unified-page .gs-card-label, .gs-unified-page .gs-gpu-kicker { color: #b5cad2; opacity: 1; }
+.gs-unified-page .gs-technical-row { border-color: #234755; }
+.gs-unified-page .boxed-list row { background: transparent; color: #edf5f8; border-color: #234755; }
+.gs-unified-page row .subtitle, .gs-unified-page preferencesgroup > box > label { color: #b6cbd4; opacity: 1; }
+.gs-unified-page button:not(.flat):not(.destructive-action):not(.circular):not(.suggested-action):not(.gs-home-aurelia):not(:checked) { border-color: #22b9bd; color: #f3ffff; background: linear-gradient(180deg,#105462,#081b26); box-shadow: inset 0 1px 3px alpha(#35fff0,0.22); }
+.gs-unified-page button:not(.flat):not(.destructive-action):not(.circular):not(.suggested-action):not(.gs-home-aurelia):not(:checked):hover { border-color: #76f8ec; background: linear-gradient(180deg,#147382,#0b3541); }
+.gs-unified-page button:not(.flat):not(.destructive-action):not(.circular):not(.suggested-action):not(.gs-home-aurelia):not(:checked):active { background: #064450; box-shadow: inset 0 2px 4px alpha(black,0.45); }
+.gs-unified-page button:checked, .gs-unified-page button.suggested-action { border-color: #18eee2; background: linear-gradient(180deg,#087c86,#06313c); color: white; }
+.gs-unified-page button:disabled { opacity: 0.42; box-shadow: none; }
+.gs-unified-page button.destructive-action { background: #512531; color: #ffd3da; border-color: #af5c70; }
+.gs-unified-page button.destructive-action:hover { background: #70303e; }
+.gs-unified-page button:focus-visible, .gs-unified-page entry:focus-within { outline: 2px solid #83f8ed; outline-offset: 2px; }
+.gs-unified-page button.flat { color: #c3e9e8; }
+.gs-unified-page entry, .gs-unified-page spinbutton, .gs-unified-page textview, .gs-unified-page textview text { color: #eef7fa; background: #071824; border-color: #3b6978; }
+.gs-unified-page dropdown > button { color: #edf7fa; }
+.gs-unified-page popover contents { background: #0a202c; color: #edf7fa; border-color: #347280; }
+.gs-unified-page popover row:selected, .gs-unified-page row:selected { background: #10505b; color: white; }
+.gs-unified-page scale trough { background: #294451; }
+.gs-unified-page scale highlight, .gs-unified-page progressbar progress { background: linear-gradient(180deg,#2cf5e4,#00a5b7); }
+.gs-unified-page progressbar trough { background: #263e4b; }
+.gs-unified-page switch { background: #2c4653; }
+.gs-unified-page switch:checked { background: #078b8e; }
+.gs-unified-page .error, .gs-unified-page .error label { color: #ff9caa; }
+.gs-unified-page .warning, .gs-unified-page .warning label { color: #ffc068; }
+/* Purple belongs to Aurelia; destructive and disabled states retain their meaning. */
+.gs-unified-page.gs-benchmarks .gs-page-title { color: #d7a5ff; }
+.gs-unified-page.gs-benchmarks .gs-card, .gs-unified-page.gs-benchmarks .gs-gpu-surface { border-color: #79579e; background: linear-gradient(140deg,#201b35,#081520); }
+.gs-unified-page.gs-benchmarks button.suggested-action, .gs-unified-page button.gs-home-aurelia { border-color: #d58cff; background: linear-gradient(180deg,#71429a,#20162e); box-shadow: inset 0 1px 3px alpha(#e9a2ff,0.4); }
+.gs-unified-page.gs-benchmarks button.suggested-action:hover, .gs-unified-page button.gs-home-aurelia:hover { background: linear-gradient(180deg,#9254be,#40234e); border-color: #f0c5ff; }
+.gs-unified-page.gs-benchmarks button.suggested-action:active, .gs-unified-page button.gs-home-aurelia:active { background: #422351; }
+
+.gs-unified-page .gs-summary-card:first-child { border-top-color: #ffad32; }
+.gs-unified-page.gs-benchmarks drawingarea { color: #b786ec; }
+
+.gs-unified-page .gs-live-chart { color: #06ddd5; }
+.gs-unified-page.gs-benchmarks .gs-live-chart { color: #b786ec; }
+.gs-unified-page button:disabled { opacity: 0.6; }
+
+.gs-unified-page.gs-benchmarks button:checked { border-color: #d58cff; background: linear-gradient(180deg,#71429a,#20162e); }
+
+/* Content density follows allocated logical width, not monitor pixels or a zoom transform. */
+.gs-live-chart { font-size: 10px; }
+.gs-density-large { font-size: 17px; }
+.gs-density-large .gs-brand { font-size: 27px; }
+.gs-density-large .gs-sidebar > box > button { font-size: 17px; min-height: 44px; }
+.gs-density-large .gs-sidebar-note { font-size: 13px; }
+.gs-density-large .gs-home-title, .gs-density-large .gs-page-title, .gs-density-large .gs-gpu-title { font-size: 38px; }
+.gs-density-large .gs-home-heading, .gs-density-large .gs-section-title { font-size: 23px; }
+.gs-density-large .gs-home-caption, .gs-density-large .gs-home-memory-detail { font-size: 13px; }
+.gs-density-large .gs-home-number { font-size: 25px; }
+.gs-density-large .gs-home-gauge-value { font-size: 24px; }
+.gs-density-large .gs-home-profile, .gs-density-large .gs-home-teal, .gs-density-large .gs-home-button-title { font-size: 19px; }
+.gs-density-large .gs-home-summary .gs-home-identity .gs-home-button-title { font-size: 18px; }
+.gs-density-large .gs-home-summary .gs-home-caption { font-size: 13px; }
+.gs-density-large .gs-home-subtitle, .gs-density-large .gs-home-processes, .gs-density-large .gs-home-live-state { font-size: 14px; }
+.gs-density-large .gs-home-card { padding: 15px; }
+.gs-density-large .gs-home-action { padding: 14px; }
+.gs-density-large .gs-home-detail-action { padding: 5px 8px; font-size: 13px; }
+.gs-density-large .gs-home-banner .gs-home-button-title { font-size: 30px; }
+.gs-density-large .gs-home-banner-command { font-size: 18px; padding: 12px 16px; }
+.gs-density-large .gs-home-bar trough, .gs-density-large .gs-home-bar progress { min-height: 10px; }
+.gs-density-large .gs-home-sources, .gs-density-large .gs-source, .gs-density-large .gs-status { font-size: 12px; }
+.gs-density-large .gs-page-caption, .gs-density-large .gs-gpu-caption, .gs-density-large .gs-card-detail { font-size: 17px; }
+.gs-density-large .gs-gpu-number, .gs-density-large .gs-card-value, .gs-density-large .gs-summary-value { font-size: 30px; }
+.gs-density-large .gs-live-chart { font-size: 14px; }
+.gs-density-large .gs-live-chart { min-height: 180px; }
+
+/* Observed compute activity uses the established Aurelia violet. */
+.gs-engine-compute .gs-live-chart { color: #b798ee; }
+
+/* Density follows the visible home viewport, keeping sensor rows readable. */
+.gs-engine-title { font-size: 12px; }
+.gs-home-compact-height .gs-home-card { padding: 8px; }
+
+/* The old desktop-wide minimum must not override home viewport sizing. */
+.gs-home .gs-live-chart { min-height: 0; }
+.gs-home-compact-height .gs-live-chart { font-size: 10px; }
+
+/* Reference cards: one temperature per row; fan mode/speed beside the plot. */
+.gs-home-temperature-row { margin: 1px 0; }
+.gs-home-temperature-row .gs-home-number { font-size: 12px; color: #f4f8fa; }
+.gs-home-temperature-row .gs-home-bar trough { min-height: 9px; border: 1px solid #324754; background: #253744; }
+.gs-home-temperature-row .gs-home-bar progress { min-height: 9px; }
+.gs-home-temperature-cpu .gs-home-number, .gs-home-temperature-cpu .gs-home-icon { color: #ffb52f; }
+.gs-home-temperature-cpu .gs-home-bar progress { background: linear-gradient(180deg,#ffd066,#f3910d); }
+.gs-home-temperature-row.gs-home-unavailable .gs-home-bar { opacity: 0.35; }
+.gs-home-fan-speed { font-size: 13px; font-weight: 750; }
+.gs-home-fan-mode { background: linear-gradient(180deg,#253747,#12202e); border: 1px solid #50616d; border-radius: 6px; }
+
+/* Compact values centered within the home hardware rings. */
+.gs-home-number.gs-home-ring-number, .gs-density-large .gs-home-number.gs-home-ring-number { font-size: 14px; }
+
+/* Aurelia result hierarchy: relative indices and raw measurements stay distinct. */
+.gs-aurelia-hero { padding: 22px; border-radius: 18px; border: 1px solid #b27bd8; background: linear-gradient(125deg,#39234e,#111b2b); color: #f6efff; }
+.gs-aurelia-kicker { font-size: 12px; font-weight: 800; letter-spacing: 1px; color: #d7b2f4; }
+.gs-aurelia-result { font-size: 48px; font-weight: 850; font-feature-settings: "tnum"; color: #ffffff; }
+.gs-aurelia-unit { font-size: 13px; color: #dbc5ec; }
+.gs-aurelia-grid > flowboxchild { padding: 0; }
+.gs-aurelia-tile { padding: 16px; border-radius: 14px; border: 1px solid #725087; background: alpha(#c084ed,0.07); }
+.gs-aurelia-subscore { font-size: 25px; font-weight: 800; font-feature-settings: "tnum"; color: #eed9ff; }
+.gs-aurelia-measure { padding: 10px; border-bottom: 1px solid #4e3e62; }
+
+/* Aurelia: amber identity, semantic hardware accents, fluid mockup composition. */
+.gs-unified-page.gs-benchmarks .gs-page-title { color: #F59E0B; }
+.gs-unified-page.gs-benchmarks .gs-card, .gs-unified-page.gs-benchmarks .gs-gpu-surface { border-color: #3b4853; background: linear-gradient(140deg,#1b252d,#0e151c); }
+.gs-unified-page.gs-benchmarks button.suggested-action { background: linear-gradient(180deg,#ff9c18,#b34d00); border-color: #F59E0B; color: white; box-shadow: inset 0 1px 2px alpha(white,0.25); }
+.gs-unified-page.gs-benchmarks button.suggested-action:hover { background: linear-gradient(180deg,#ffb33c,#d86b00); border-color: #ffc16a; }
+.gs-unified-page.gs-benchmarks button.suggested-action:active { background: #ad4d00; }
+.gs-unified-page.gs-benchmarks button:checked { border-color: #F59E0B; background: linear-gradient(180deg,#7d490c,#3b260e); }
+.gs-unified-page.gs-benchmarks drawingarea, .gs-unified-page.gs-benchmarks .gs-live-chart { color: #F59E0B; }
+.gs-aurelia-dashboard { padding: 0; }
+.gs-aurelia-dashboard flowboxchild { padding: 0; }
+.gs-aurelia-panel { padding: 16px; border-radius: 16px; border: 1px solid #3f505d; background: linear-gradient(145deg,#1b252e,#10171f); }
+.gs-aurelia-hero { border-color: #d78118; background: linear-gradient(125deg,#51301e,#191c21); color: #fff7e7; }
+.gs-aurelia-kicker, .gs-aurelia-unit { color: #e6c898; }
+.gs-aurelia-tile { border-color: #56616d; background: linear-gradient(135deg,#242e38,#111820); }
+.gs-aurelia-subscore { color: #f0f4f8; font-size: 28px; }
+.gs-aurelia-measure { padding: 7px 0; border-bottom-color: #33414c; }
+.gs-aurelia-delta { color: #75d993; }
+.gs-vendor-amd { border-color: #a53c49; background: linear-gradient(135deg,#39232b,#151b23); }
+.gs-vendor-intel { border-color: #2587ad; background: linear-gradient(135deg,#143443,#111b25); }
+.gs-vendor-nvidia { border-color: #638f40; background: linear-gradient(135deg,#2b3923,#141e1a); }
+.gs-vendor-neutral { border-color: #687887; }
+.gs-memory { border-color: #368e99; background: linear-gradient(135deg,#193b42,#111d26); }
+.gs-storage { border-color: #3b996a; background: linear-gradient(135deg,#193d30,#101f1b); }
+.gs-aurelia-dashboard progressbar trough { min-height: 6px; background: #303b45; }
+.gs-aurelia-dashboard progressbar progress { min-height: 6px; background: #F59E0B; }
+.gs-vendor-amd progressbar progress { background: #e64b59; }
+.gs-vendor-intel progressbar progress { background: #16a4e1; }
+.gs-memory progressbar progress { background: #39b8c7; }
+.gs-storage progressbar progress { background: #45cf87; }
+
+/* Shared hardware palette. Manufacturer accents are independent of status. */
+@define-color gs_identity #F59E0B;
+@define-color gs_hardware_amd #ED1C24;
+@define-color gs_hardware_intel #0071C5;
+@define-color gs_hardware_neutral #9AA7B4;
+@define-color gs_hardware_memory #8CA9BE;
+@define-color gs_hardware_storage #539977;
+
+/* Aurelia correction: a workspace, no nested navigation chrome. */
+.gs-unified-page.gs-benchmarks { background: #10151b; }
+.gs-unified-page.gs-benchmarks button { background: #222b34; border: 1px solid #3a4651; box-shadow: none; }
+.gs-unified-page.gs-benchmarks button:hover { background: #2c3742; }
+.gs-unified-page.gs-benchmarks button.suggested-action { background: @gs_identity; color: #17130c; border-color: @gs_identity; box-shadow: none; font-weight: 750; padding: 12px 20px; }
+.gs-unified-page.gs-benchmarks button.suggested-action:hover { background: #ffb333; border-color: #ffb333; }
+.gs-unified-page.gs-benchmarks button.suggested-action:active { background: #d98b06; }
+.gs-unified-page.gs-benchmarks button:checked { background: #46351a; border-color: @gs_identity; }
+.gs-aurelia-dashboard { padding: 0; }
+.gs-aurelia-header { margin-bottom: 8px; }
+.gs-aurelia-title { font-size: 29px; font-weight: 800; color: #f2f4f6; }
+.gs-aurelia-panel { padding: 20px; border-radius: 15px; border: 1px solid #34404b; background: #192129; }
+.gs-aurelia-panel-title { font-size: 17px; font-weight: 750; color: #f1f3f5; }
+.gs-aurelia-score-card { padding: 20px; min-height: 166px; border-radius: 15px; border: 1px solid #3a4651; background: #192129; }
+.gs-aurelia-score-heading { font-size: 18px; font-weight: 750; }
+.gs-aurelia-global { background: #2c241a; border: 1px solid #9e6b21; }
+.gs-aurelia-global-number { font-size: 64px; font-weight: 850; font-feature-settings: "tnum"; color: @gs_identity; }
+.gs-aurelia-category-number { font-size: 34px; font-weight: 800; font-feature-settings: "tnum"; color: #f5f6f7; }
+.gs-aurelia-caption { font-size: 14px; color: #d0d7de; }
+.gs-aurelia-muted { font-size: 13px; color: #9daab7; }
+.gs-aurelia-feedback { font-size: 13px; color: #aab4be; }
+.gs-aurelia-measure-value { font-size: 15px; font-weight: 700; font-feature-settings: "tnum"; color: #eef1f4; }
+.gs-aurelia-status { font-size: 16px; font-weight: 700; color: #e0e5e9; }
+.gs-aurelia-comparison-number { font-size: 35px; font-weight: 800; color: #e5eaee; }
+.gs-aurelia-global .gs-hardware-accent { color: @gs_identity; }
+.gs-vendor-amd, .gs-vendor-intel, .gs-vendor-nvidia, .gs-vendor-neutral, .gs-memory, .gs-storage { background: #192129; }
+.gs-vendor-amd { border-color: alpha(@gs_hardware_amd,0.5); }
+.gs-vendor-intel { border-color: alpha(@gs_hardware_intel,0.65); }
+.gs-vendor-neutral, .gs-vendor-nvidia { border-color: #55616c; }
+.gs-memory { border-color: alpha(@gs_hardware_memory,0.6); }
+.gs-storage { border-color: alpha(@gs_hardware_storage,0.65); }
+.gs-vendor-amd .gs-hardware-accent { color: @gs_hardware_amd; }
+.gs-vendor-intel .gs-hardware-accent { color: @gs_hardware_intel; }
+.gs-vendor-neutral .gs-hardware-accent, .gs-vendor-nvidia .gs-hardware-accent { color: @gs_hardware_neutral; }
+.gs-memory .gs-hardware-accent { color: @gs_hardware_memory; }
+.gs-storage .gs-hardware-accent { color: @gs_hardware_storage; }
+.gs-aurelia-test-row { padding: 12px 0; border: none; border-bottom: 1px solid #303b45; background: none; }
+.gs-unified-page.gs-benchmarks button:not(.flat):not(.destructive-action):not(.circular):not(.suggested-action):not(.gs-home-aurelia):not(:checked) { background: #242e38; border-color: #46535f; box-shadow: none; color: #e6ebef; }
+.gs-unified-page.gs-benchmarks button:not(.flat):not(.destructive-action):not(.circular):not(.suggested-action):not(.gs-home-aurelia):not(:checked):hover { background: #303c48; border-color: #697683; box-shadow: none; }
+.gs-unified-page.gs-benchmarks button:focus-visible { outline-color: @gs_identity; }
+.gs-aurelia-dashboard .gs-aurelia-title { font-size: 29px; }
+
+/* Reference composition: native title bar, glossy global strip, contextual rail. */
+.gs-workspace-topbar { padding: 0 14px 0 20px; min-height: 76px; background: linear-gradient(180deg,#1d2730 0%,#111a23 48%,#0b121b 100%); border-bottom: 1px solid #42515f; box-shadow: inset 0 1px alpha(white,0.05); }
+.gs-workspace-brand { padding-right: 12px; }
+.gs-brand-mark { color: #ff8c08; }
+.gs-brand-name { font-size: 27px; font-weight: 850; color: #f3f5f7; }
+.gs-brand-caption { font-size: 11px; color: #d0d8e0; }
+.gs-workspace-tab { min-width: 82px; min-height: 58px; padding: 8px 16px; border: 1px solid transparent; border-radius: 0 0 12px 12px; background: transparent; box-shadow: none; color: #d6dee6; font-size: 15px; font-weight: 650; }
+.gs-workspace-tab:hover { background: linear-gradient(180deg,alpha(#ffad36,0.04),alpha(#ffad36,0.14)); color: white; }
+.gs-workspace-tab:checked { color: #ffb13d; border-color: alpha(#e78c1b,0.65); border-top-color: transparent; background: linear-gradient(180deg,alpha(#bb6916,0.03) 0%,alpha(#8e4b13,0.22) 65%,alpha(#ee8e1a,0.34) 100%); box-shadow: inset 0 -2px #ef9b24, inset 0 -8px 14px alpha(#ed850d,0.19); }
+.gs-context-sidebar { background: #0c1118; border-right: 1px solid #2d3a46; }
+.gs-context-sidebar button { border: 1px solid transparent; border-radius: 0 9px 9px 0; min-height: 43px; margin-right: 1px; padding: 6px 14px; background: transparent; box-shadow: none; color: #e1e6ed; }
+.gs-context-sidebar button label { font-size: 15px; font-weight: 600; }
+.gs-context-sidebar button:hover { background: alpha(#e99a35,0.09); }
+.gs-context-sidebar button:checked { color: white; border-left: 4px solid #f59e0b; background: linear-gradient(105deg,#874711,alpha(#b36b25,0.28)); box-shadow: inset 0 1px alpha(#ffbf57,0.13); }
+.gs-context-version { font-size: 12px; color: #aab8c6; }
+.gs-aurelia-dashboard .gs-aurelia-title { font-size: 30px; }
+.gs-aurelia-score-card { min-height: 115px; padding: 18px; border-radius: 14px; box-shadow: inset 0 1px alpha(white,0.07), inset 0 -1px alpha(black,0.35); }
+.gs-aurelia-global { background: linear-gradient(125deg,#52321f 0%,#32271f 48%,#181c23 100%); border-color: #a56b28; box-shadow: inset 0 1px alpha(#ffbd62,0.19), inset 0 -2px alpha(#ef900e,0.6); }
+.gs-aurelia-global-number { font-size: 52px; color: #fff8eb; }
+.gs-aurelia-category-number { font-size: 31px; }
+.gs-aurelia-score-card.gs-vendor-amd { background: linear-gradient(125deg,alpha(#ed1c24,0.16),#191e26 82%); border-color: alpha(#cf3a44,0.5); }
+.gs-aurelia-score-card.gs-vendor-intel { background: linear-gradient(125deg,alpha(#0071c5,0.22),#141e29 82%); border-color: alpha(#268dc4,0.5); }
+.gs-aurelia-score-card.gs-vendor-neutral { background: linear-gradient(125deg,#28303a,#171e26); }
+.gs-aurelia-score-card.gs-memory { background: linear-gradient(125deg,alpha(#789bb7,0.2),#1a202a 82%); border-color: alpha(#8ca9be,0.45); }
+.gs-aurelia-score-card.gs-storage { background: linear-gradient(125deg,alpha(#287c50,0.27),#111f1c 82%); border-color: alpha(#349965,0.5); }
+.gs-aurelia-panel { background: linear-gradient(145deg,#1b252e 0%,#141c24 65%,#111922 100%); border-color: #40515f; box-shadow: inset 0 1px alpha(white,0.06), 0 2px 3px alpha(black,0.13); padding: 16px; }
+.gs-aurelia-panel-title { padding-bottom: 10px; border-bottom: 1px solid #33414d; }
+.gs-aurelia-test-row { padding: 5px 0; border-bottom: 1px solid alpha(#465564,0.4); }
+.gs-aurelia-view-tabs button { min-width: 94px; border-radius: 10px; padding: 10px 20px; }
+.gs-unified-page.gs-benchmarks button:not(.flat):not(.destructive-action):not(.circular):not(.suggested-action):not(.gs-home-aurelia):not(:checked) { background: linear-gradient(180deg,#35414d 0%,#25303b 43%,#17212b 52%,#111922 100%); border-color: #485c6c; box-shadow: inset 0 1px alpha(white,0.17), inset 0 -1px alpha(black,0.6), 0 2px 3px alpha(black,0.2); }
+.gs-unified-page.gs-benchmarks button:not(.flat):not(.destructive-action):not(.circular):not(.suggested-action):not(.gs-home-aurelia):not(:checked):hover { background: linear-gradient(180deg,#465562,#303f4d 43%,#25323d 52%,#1b2731); border-color: #718393; }
+.gs-unified-page.gs-benchmarks button.suggested-action, .gs-unified-page.gs-benchmarks .gs-aurelia-view-tabs button:checked { color: white; background: linear-gradient(180deg,#ffb12a 0%,#fa920c 43%,#e87800 53%,#b94c00 100%); border: 1px solid #ffac25; box-shadow: inset 0 1px alpha(#ffe2a7,0.66), inset 0 -2px alpha(#ff9a16,0.4), 0 2px 4px alpha(black,0.25); }
+.gs-unified-page.gs-benchmarks button.suggested-action:hover, .gs-unified-page.gs-benchmarks .gs-aurelia-view-tabs button:checked:hover { background: linear-gradient(180deg,#ffc04c,#ffa220 43%,#f18a09 53%,#d36400); }
+.gs-workspace-surface { background: #0b1118; }
+
+/* Approved Proposition-Aurelia-identite-v1: dimensional cards and restrained light. */
+.gs-aurelia-dashboard { background: linear-gradient(135deg,alpha(#c47621,0.035),transparent 70%); }
+.gs-aurelia-score-card { padding: 15px 17px; min-height: 109px; border-radius: 14px; }
+.gs-aurelia-global { background: linear-gradient(125deg,#774518 0%,#4c2b17 45%,#251b19 100%); border: 1px solid #f09c20; box-shadow: inset 0 1px alpha(#ffdda3,0.35), inset 0 -3px alpha(#ff8e08,0.8), 0 2px 4px alpha(black,0.32); }
+.gs-aurelia-global-number { font-size: 55px; color: #fff8ef; }
+.gs-aurelia-global .gs-aurelia-score-heading { font-size: 21px; }
+.gs-aurelia-global .gs-hardware-accent { color: #ffc425; }
+.gs-aurelia-category-number { font-size: 31px; }
+.gs-aurelia-score-heading { font-size: 18px; }
+.gs-aurelia-card-hardware { font-size: 12px; color: #e1e6eb; }
+.gs-aurelia-score-card.gs-vendor-amd { background: linear-gradient(135deg,#4a222a,#29191e 65%,#171a21); border-color: #993342; box-shadow: inset 0 1px alpha(#ff8994,0.18), 0 2px 4px alpha(black,0.3); }
+.gs-aurelia-score-card.gs-vendor-intel { background: linear-gradient(135deg,#173e57,#172934 65%,#111923); border-color: #286c9a; }
+.gs-aurelia-score-card.gs-memory { background: linear-gradient(135deg,#234557,#192b3a 65%,#121d29); border-color: #467f9c; }
+.gs-aurelia-score-card.gs-storage { background: linear-gradient(135deg,#144832,#0d2b1e 65%,#0a1c16); border-color: #1e874d; }
+.gs-vendor-amd .gs-hardware-accent { color: #ff414c; }
+.gs-vendor-intel .gs-hardware-accent { color: #1babed; }
+.gs-memory .gs-hardware-accent { color: #76c3f2; }
+.gs-storage .gs-hardware-accent { color: #29e15b; }
+.gs-aurelia-scale { font-size: 11px; color: #c6d0d9; }
+.gs-aurelia-panel { padding: 15px; border: 1px solid #516471; background: linear-gradient(145deg,#1c2934 0%,#111b24 70%,#0c141d 100%); box-shadow: inset 0 1px alpha(white,0.10), 0 3px 5px alpha(black,0.26); }
+.gs-aurelia-panel-title { font-size: 17px; color: #f5f6f8; padding-bottom: 9px; }
+.gs-aurelia-test-row { background: transparent; padding: 3px 0; }
+.gs-aurelia-test-row .gs-aurelia-caption { color: #f0f2f4; font-size: 13px; }
+.gs-aurelia-test-row .gs-aurelia-measure-value { font-size: 13px; }
+.gs-aurelia-reference-bar { min-height: 14px; }
+.gs-aurelia-latest { border-color: #658093; }
+.gs-result-badge { border-radius: 999px; padding: 5px 11px; }
+.gs-result-badge .gs-aurelia-caption { font-size: 14px; font-weight: 700; color: white; }
+.gs-result-badge.success { background: linear-gradient(180deg,#10aa3c,#007f25 55%,#005b19); border: 1px solid #14963b; box-shadow: inset 0 1px alpha(#8fffad,0.35); }
+.gs-result-badge.warning { background: linear-gradient(180deg,#a77a13,#665016); border: 1px solid #a18a40; }
+.gs-result-badge.unavailable { background: #313d47; border: 1px solid #52616b; }
+.gs-aurelia-comparison-row { padding: 3px 0; border-bottom: 1px solid alpha(#60707d,0.25); }
+.gs-aurelia-comparison-number { font-size: 39px; font-weight: 850; }
+.gs-positive { color: #44ed78; }
+.gs-negative { color: #ff5b5b; }
+.gs-aurelia-test-banner { padding: 5px 12px; border: 1px solid #f59e0b; border-radius: 999px; color: #ffdc72; background: #442a0d; font-size: 12px; font-weight: 800; }
+.gs-aurelia-panel-heading { padding-bottom: 8px; border-bottom: 1px solid #3c4d59; }
+.gs-aurelia-panel-title { padding: 0; border: none; }
+.gs-aurelia-card-hardware { font-size: 12px; }
+.gs-aurelia-unit { font-size: 14px; color: #f2e6d1; }
+.gs-aurelia-fps { padding: 12px 15px; }
+.gs-aurelia-test-banner { font-size: 11px; }
+.gs-unified-page.gs-benchmarks button.gs-aurelia-saved:disabled { opacity: 0.9; color: #d4e0e8; }
+.gs-aurelia-test-row .gs-aurelia-caption, .gs-aurelia-test-row .gs-aurelia-measure-value { font-size: 14px; }
+
+/* Directional reflections are tapered native paths, not a white outline. */
+.gs-aurelia-dashboard .gs-aurelia-score-card,
+.gs-aurelia-dashboard .gs-aurelia-panel,
+.gs-aurelia-dashboard .gs-aurelia-hero,
+.gs-aurelia-dashboard .gs-aurelia-tile {
+    box-shadow: inset 0 -1px 0 alpha(black,0.28), 0 3px 5px alpha(black,0.30);
+}
+.gs-aurelia-dashboard .gs-aurelia-panel { border-color: #3b4c58; }
+.gs-aurelia-dashboard .gs-aurelia-global {
+    box-shadow: inset 0 -2px 0 alpha(#ffad35,0.45), 0 3px 5px alpha(black,0.30);
+}

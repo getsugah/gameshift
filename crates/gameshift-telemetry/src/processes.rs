@@ -116,12 +116,20 @@ pub struct Snapshot {
     pub ambiguous: usize,
     pub truncated: bool,
     pub elapsed_seconds: f64,
+    #[serde(skip)]
+    pub engine_activity: BTreeMap<String, BTreeMap<String, crate::engines::Activity>>,
+    #[serde(skip)]
+    pub engine_issues: Vec<String>,
+    #[serde(skip)]
+    pub engine_sampled_at: Option<Instant>,
 }
 #[derive(Default)]
 pub struct Tracker {
     previous: BTreeMap<(u32, u64, String, u64), Client>,
     history: BTreeMap<(u32, u64, String), Vec<Option<f64>>>,
     time: Option<Instant>,
+    engine_previous: crate::engines::Previous,
+    inventory: crate::inventory::Discovery,
 }
 struct Observed {
     pid: u32,
@@ -155,14 +163,25 @@ impl Tracker {
     pub fn sample_at(&mut self, root: &Path, now: Instant) -> Snapshot {
         let began = Instant::now();
         let mut result = Snapshot::default();
-        let devices = crate::gpus::discover_at(root).unwrap_or_default();
+        let inventory = if root == Path::new("/") {
+            crate::inventory::current()
+        } else {
+            self.inventory.get_at(root, now)
+        };
+        let devices = &inventory.gpus;
         let known = devices
             .iter()
             .map(|g| g.pci.as_str())
             .collect::<BTreeSet<_>>();
         let mut observations = Vec::new();
         let mut descriptors = 0usize;
-        if let Ok(entries) = fs::read_dir(root.join("proc")) {
+        let entries = fs::read_dir(root.join("proc"));
+        if let Err(error) = &entries {
+            result
+                .engine_issues
+                .push(format!("Accès /proc impossible : {error}"));
+        }
+        if let Ok(entries) = entries {
             for process in entries.flatten() {
                 if began.elapsed() > Duration::from_millis(300) || descriptors >= 32768 {
                     result.truncated = true;
@@ -255,6 +274,26 @@ impl Tracker {
                 }
             }
         }
+        if !root.join("proc").is_dir() {
+            result
+                .engine_issues
+                .push("Le répertoire proc n’est pas accessible.".into());
+        }
+        result.engine_sampled_at = Some(now);
+        result.engine_activity = crate::engines::deltas(
+            observations
+                .iter()
+                .filter(|o| {
+                    devices.iter().any(|g| {
+                        Some(&g.pci) == o.client.pci.as_ref()
+                            && g.driver.as_deref() == Some(o.client.driver.as_str())
+                    })
+                })
+                .map(|o| (o.pid, o.start, o.client.clone()))
+                .collect(),
+            &mut self.engine_previous,
+            self.time.and_then(|t| now.checked_duration_since(t)),
+        );
         let dt = self
             .time
             .map(|t| now.saturating_duration_since(t).as_secs_f64())
@@ -357,9 +396,44 @@ impl Tracker {
     }
     pub fn pause(&mut self) {
         self.previous.clear();
+        self.engine_previous.clear();
         self.time = None;
         for values in self.history.values_mut() {
             values.push(None);
         }
     }
+}
+
+/// One bounded scan shared by the home and process views. Call only from their workers.
+pub fn shared_snapshot(cadence: Duration) -> std::sync::Arc<Snapshot> {
+    use std::sync::{Arc, Mutex, OnceLock};
+    struct Shared {
+        tracker: Tracker,
+        cached: Option<(Instant, Arc<Snapshot>)>,
+    }
+    static SHARED: OnceLock<Mutex<Shared>> = OnceLock::new();
+    let mut state = SHARED
+        .get_or_init(|| {
+            Mutex::new(Shared {
+                tracker: Tracker::default(),
+                cached: None,
+            })
+        })
+        .lock()
+        .unwrap_or_else(|error| error.into_inner());
+    let now = Instant::now();
+    let cadence = cadence.clamp(Duration::from_millis(500), Duration::from_secs(5));
+    if let Some((time, snapshot)) = &state.cached {
+        if now.duration_since(*time) < cadence {
+            return snapshot.clone();
+        }
+    }
+    if state.cached.as_ref().is_some_and(|(time, _)| {
+        now.duration_since(*time) > cadence.saturating_mul(3).max(Duration::from_secs(5))
+    }) {
+        state.tracker.pause();
+    }
+    let result = Arc::new(state.tracker.sample_at(Path::new("/"), now));
+    state.cached = Some((now, result.clone()));
+    result
 }

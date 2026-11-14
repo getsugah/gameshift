@@ -8,3 +8,5 @@ pub mod workload;
 pub mod reporting;
 
 pub mod calibrated;
+
+pub mod power;

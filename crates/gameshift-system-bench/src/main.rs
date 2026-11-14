@@ -37,6 +37,7 @@ fn run() -> Result<(), String> {
     if args.first().is_some_and(|v| v == "--component") && args.len() == 2 {
         let category = match args[1].as_str() {
             "ram" => gameshift_system_bench::system::ram::run(),
+            "storage" => gameshift_system_bench::system::storage::run(),
             "cpu" => gameshift_system_bench::system::cpu::run(),
             "gpu-diagnostic" | "combined-diagnostic" => {
                 let mut config = gameshift_system_bench::system::gpu::select(true)?;
@@ -57,18 +58,21 @@ fn run() -> Result<(), String> {
         );
         return Ok(());
     }
-    if args.first().is_some_and(|v| v == "--evaluate") {
+    if args.first().is_some_and(|v| v == "--evaluate" || v == "--evaluate-storage") {
         let kind = match args.get(1).map(String::as_str).unwrap_or("original") {
             "original" => gameshift_system_bench::session::SystemKind::Original,
             "optimized" => gameshift_system_bench::session::SystemKind::Optimized,
             _ => return Err("État attendu : original ou optimized".into()),
         };
-        let report = gameshift_system_bench::system::evaluation::run(kind, |phase, fraction| {
+        let progress = |phase: &str, fraction: f64| {
             eprintln!(
                 "GS_SYSTEM_PROGRESS {}",
                 serde_json::json!({"phase":phase,"fraction":fraction})
             )
-        })?;
+        };
+        let report = if args[0] == "--evaluate-storage" {
+            gameshift_system_bench::system::evaluation::run_with_storage(kind, progress)
+        } else { gameshift_system_bench::system::evaluation::run(kind, progress) }?;
         println!(
             "{}",
             serde_json::to_string(&report).map_err(|e| e.to_string())?

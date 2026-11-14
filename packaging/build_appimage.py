@@ -182,7 +182,7 @@ def main():
         inventory.append({'name': package['name'], 'version': package['version'],
                           'license': metadata.get('license'), 'notices': sorted(notices)})
     (rust_notices/'inventory.json').write_text(json.dumps(inventory, indent=2)+'\n')
-    for relative in ['docs/ALPHA.md','docs/PUBLIC_BUILD.md','docs/GPU_PROFILES.md','docs/AMDGPU_CONTROLS.md','docs/THIRD_PARTY.md']:
+    for relative in ['docs/ALPHA.md', 'docs/PUBLIC_BUILD.md', 'docs/GPU_PROFILES.md', 'docs/AMDGPU_CONTROLS.md', 'docs/THIRD_PARTY.md', 'docs/AURELIA_RESULTS.md', 'docs/CPU_POWER_RAPL.md', 'docs/GPU_ENGINE_MONITORING.md', 'docs/SENSOR_DISCOVERY.md']:
         source=ROOT/relative
         if source.is_file():
             destination=docs/relative

@@ -67,6 +67,70 @@ fn fixture() -> Session {
         }),
     }
 }
+
+fn storage_fixture() -> Session {
+    let mut s = fixture();
+    s.schema_version=3;
+    s.protocol=system::scoring::PROTOCOL.into();
+    let b=s.system.as_mut().unwrap();
+    b.protocol=system::scoring::PROTOCOL.into();
+    for c in &mut b.categories {
+        let (names,unit) = match c.id.as_str() {
+            "cpu"=>(vec!["cpu/single/1","cpu/multi_sustained/2"],"étapes/s"),
+            "gpu"=>(vec!["gpu/raster"],"images/s"),
+            "ram"=>(vec!["ram/read/268435456","ram/write/268435456","ram/copy/268435456"],"Go/s logiques"),
+            _=>continue,
+        };
+        c.metrics=names.into_iter().map(|id|metric(id,&c.id,id,unit,vec![100.;3],"fixture-work")).collect();
+    }
+    b.categories.push(Category{id:"storage".into(),state:State::Executed,elapsed_seconds:1.,metrics:vec![metric("storage/read","storage","read","Go/s",vec![100.;3],"fixture-work"),metric("storage/write","storage","write","Go/s",vec![100.;3],"fixture-work")],raw:serde_json::json!({"fixture":true}),notes:vec![]});
+    s.metrics=b.categories.iter().flat_map(|c|c.metrics.clone()).collect();
+    refresh_points(&mut s);
+    s
+}
+fn refresh_points(s:&mut Session) {
+    let scores=serde_json::to_value(system::scoring::calculate(s)).unwrap();
+    s.system.as_mut().unwrap().parameters=serde_json::json!({"rate_scores":scores,"score_version":system::scoring::VERSION});
+}
+#[test] fn storage_protocol_export_import_preserves_exact_original_bytes() {
+    use gameshift_system_bench::store;
+    let mut s=storage_fixture();
+    for c in &mut s.system.as_mut().unwrap().categories {for m in &mut c.metrics {m.values=vec![0.123456789012345,1.987654321098765,9.314159265358979];}}
+    s.metrics=s.system.as_ref().unwrap().categories.iter().flat_map(|c|c.metrics.clone()).collect();refresh_points(&mut s);
+    let root=std::env::temp_dir().join(format!("aurelia-v3-export-{}-{}",std::process::id(),std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()));
+    let entry=store::save(&root,&s).unwrap();
+    let original=std::fs::read(root.join(&entry.id).join("result.json")).unwrap();
+    let export=root.join("export.gsbench");store::export(&root,&entry.id,&export).unwrap();
+    assert_eq!(std::fs::read(&export).unwrap(),original);
+    assert_eq!(store::import(&root,&export).unwrap().id,entry.id);
+    assert!(store::load(&root,&entry.id).unwrap().system.is_some());
+    assert_eq!(std::fs::read(root.join(&entry.id).join("result.json")).unwrap(),original);
+    std::fs::remove_dir_all(root).unwrap();
+}
+#[test] fn absolute_scores_double_without_reference_or_ceiling() {
+    let a=storage_fixture();a.validate().unwrap();
+    let mut b=storage_fixture();
+    for c in &mut b.system.as_mut().unwrap().categories { for m in &mut c.metrics { for value in &mut m.values {*value*=2.;} } }
+    b.metrics=b.system.as_ref().unwrap().categories.iter().flat_map(|c|c.metrics.clone()).collect();
+    refresh_points(&mut b);b.validate().unwrap();
+    assert!((system::scoring::calculate(&b).global.unwrap()/system::scoring::calculate(&a).global.unwrap()-2.).abs()<1e-12);
+}
+#[test] fn missing_storage_never_creates_global_and_old_protocol_stays_separate() {
+    let mut s=storage_fixture();s.system.as_mut().unwrap().categories.last_mut().unwrap().state=State::Unavailable;
+    refresh_points(&mut s);s.validate().unwrap();assert!(system::scoring::calculate(&s).global.is_none());
+    assert!(reporting::compare(&fixture(),&s).is_err());
+}
+#[test] fn scores_are_derived_without_mutating_original_measurements() {
+    let s=storage_fixture();let before=serde_json::to_vec(&s).unwrap();
+    let _=system::scoring::calculate(&s);assert_eq!(before,serde_json::to_vec(&s).unwrap());
+    let mut corrupt=storage_fixture();corrupt.system.as_mut().unwrap().parameters["rate_scores"]["global"]=999999.into();assert!(corrupt.validate().is_err());
+}
+#[test] fn workload_changes_disable_points_comparison() {
+    let a=storage_fixture();let mut b=storage_fixture();
+    assert!(system::scoring::compatible(&a,&b,"storage",true));
+    for m in &mut b.metrics {if m.category=="storage"{m.work_description="different block size".into();}}
+    assert!(!system::scoring::compatible(&a,&b,"storage",true));
+}
 #[test]
 fn missing_application_does_not_invalidate_complete_native_score() {
     let a = fixture();

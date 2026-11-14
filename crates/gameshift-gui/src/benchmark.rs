@@ -76,24 +76,28 @@ fn show_gpu(content: &gtk::Box, gpu: &GpuCapabilities) {
 
 pub fn page() -> gtk::ScrolledWindow {
     let layout = gtk::Box::new(gtk::Orientation::Vertical, 24);
+    layout.add_css_class("gs-unified-page");
+    layout.add_css_class("gs-benchmarks");
     layout.set_margin_start(38);
     layout.set_margin_end(38);
     layout.set_margin_top(26);
-    layout.set_margin_bottom(40);
-    layout.append(&text("Aurelia", "gs-page-title"));
-    layout.append(&text(
-        "Mesures du processeur et de la carte graphique.",
-        "gs-page-caption",
-    ));
+    layout.set_margin_bottom(16);
     let active = Rc::new(Cell::new(false));
     crate::live_settings::register_benchmark(&active);
     let spaces = gtk::Stack::new();
+    spaces.set_widget_name("aurelia-laboratories");
     spaces.set_vhomogeneous(false);
     spaces.set_hhomogeneous(false);
     spaces.set_transition_type(gtk::StackTransitionType::Crossfade);
-    let switcher = gtk::StackSwitcher::new();
-    switcher.set_stack(Some(&spaces));
-    layout.append(&switcher);
+    let back = gtk::Button::with_label("← Résultats Aurelia");
+    back.set_halign(gtk::Align::Start);
+    back.add_css_class("flat");
+    back.set_visible(false);
+    let weak = spaces.downgrade();
+    back.connect_clicked(move |_| { if let Some(stack)=weak.upgrade(){stack.set_visible_child_name("system");} });
+    let weak_back=back.downgrade();
+    spaces.connect_visible_child_name_notify(move |stack| {if let Some(back)=weak_back.upgrade(){back.set_visible(stack.visible_child_name().as_deref()!=Some("system"));}});
+    layout.append(&back);
     layout.append(&spaces);
     let home = gtk::Box::new(gtk::Orientation::Vertical, 18);
     home.append(&text(
@@ -111,8 +115,8 @@ pub fn page() -> gtk::ScrolledWindow {
     choices.set_homogeneous(true);
     choices.set_row_spacing(14);
     choices.set_column_spacing(14);
-    for (name,title,description) in [("system","Système · CPU, cache et mémoire","Évaluation généraliste : sept domaines, rendu GPU et bibliothèques selon disponibilité."),("cpu","CPU · architecture et parallélisme","Rapide, Standard ou Approfondi : calcul, threads et sensibilité aux tailles de données."),("vulkan","GPU · scène Vulkan","Rendu 3D conservé, répétitions, stabilité et temps par image."),("storage","Stockage · à venir","Épreuve dédiée non implémentée. Aucun débit simulé ni écriture de test.")]{
-        let card=gtk::Box::new(gtk::Orientation::Vertical,10);card.add_css_class("gs-card");card.append(&text(title,"gs-section-title"));card.append(&text(description,"gs-card-detail"));let button=gtk::Button::with_label(if name=="storage"{"Indisponible dans cette alpha"}else{"Préparer ce test"});button.set_sensitive(name!="storage");let weak=spaces.downgrade();button.connect_clicked(move |_|{if let Some(stack)=weak.upgrade(){stack.set_visible_child_name(name);}});card.append(&button);choices.insert(&card,-1);
+    for (name,title,description) in [("system","Système · CPU, cache et mémoire","Profil complet avec CPU, mémoire, GPU, stockage et bibliothèques selon disponibilité."),("cpu","CPU · architecture et parallélisme","Rapide, Standard ou Approfondi : calcul, threads et sensibilité aux tailles de données."),("vulkan","GPU · scène Vulkan","Rendu 3D conservé, répétitions, stabilité et temps par image."),("system","Stockage · lecture et écriture","Inclus dans le profil complet : fichier privé, accès directs et écritures synchronisées.")]{
+        let card=gtk::Box::new(gtk::Orientation::Vertical,10);card.add_css_class("gs-card");card.append(&text(title,"gs-section-title"));card.append(&text(description,"gs-card-detail"));let button=gtk::Button::with_label(if name=="storage"{"Indisponible dans cette alpha"}else{"Préparer ce test"});button.set_sensitive(name!="storage");let weak=spaces.downgrade();button.connect_clicked(move |_|{if let Some(stack)=weak.upgrade(){stack.set_visible_child_name(name);}});button.add_css_class("suggested-action");card.append(&button);choices.insert(&card,-1);
     }
     home.append(&choices);
     home.append(&crate::benchmark_dashboard::hardware());
@@ -130,7 +134,7 @@ pub fn page() -> gtk::ScrolledWindow {
     home.append(&launch);
     spaces.add_titled(&home, Some("home"), "Accueil");
     spaces.add_titled(
-        &crate::system_lab::panel(active.clone()),
+        &crate::system_lab::panel(active.clone(), &spaces),
         Some("system"),
         "Système & historique",
     );
@@ -298,12 +302,24 @@ pub fn page() -> gtk::ScrolledWindow {
     });
     let run_panel = crate::benchmark_run::panel(&selection, &analyze, report, active);
     gpu.insert_child_after(&run_panel, Some(&selection));
-    let clamp = adw::Clamp::builder()
-        .maximum_size(1500)
-        .child(&layout)
-        .build();
+    spaces.set_visible_child_name("system");
+    layout.set_hexpand(true);
     gtk::ScrolledWindow::builder()
         .hscrollbar_policy(gtk::PolicyType::Never)
-        .child(&clamp)
+        .child(&layout)
         .build()
+}
+
+// Context sidebar routes into the existing workspaces without duplicating pages.
+pub(crate) fn named_widget(widget:&gtk::Widget,name:&str)->Option<gtk::Widget>{
+    if widget.widget_name()==name{return Some(widget.clone());}
+    let mut child=widget.first_child();while let Some(widget)=child{if let Some(found)=named_widget(&widget,name){return Some(found);}child=widget.next_sibling();}None
+}
+pub(crate) fn named_stack(widget:&gtk::Widget,name:&str)->Option<gtk::Stack>{
+    if widget.widget_name()==name {return widget.clone().downcast().ok();}
+    let mut child=widget.first_child();while let Some(widget)=child {if let Some(stack)=named_stack(&widget,name){return Some(stack);}child=widget.next_sibling();}None
+}
+pub fn navigate(page:&gtk::Widget,target:&str){
+    if let Some(stack)=named_stack(page,"aurelia-laboratories"){stack.set_visible_child_name("system");}
+    if let Some(stack)=named_stack(page,"aurelia-workspace"){stack.set_visible_child_name(match target{"history"|"comparison"=>"history","protocol"|"configuration"=>"launch",_=>"results"});}
 }

@@ -25,7 +25,12 @@ fn results(box_: &gtk::Box, result: &RunResult, path: Result<std::path::PathBuf,
     while let Some(child) = box_.first_child() {
         box_.remove(&child);
     }
-    box_.append(&label("Résultats mesurés", "gs-section-title"));
+    crate::aurelia_results::render_raster(box_, result);
+    let technical = gtk::Box::new(gtk::Orientation::Vertical, 10);
+    let expander = gtk::Expander::new(Some("Détails des répétitions · frametimes, capteurs et conditions"));
+    expander.set_child(Some(&technical));
+    box_.append(&expander);
+    technical.append(&label("Résultats mesurés", "gs-section-title"));
     let frames = result
         .repetitions
         .iter()
@@ -37,7 +42,7 @@ fn results(box_: &gtk::Box, result: &RunResult, path: Result<std::path::PathBuf,
         .map(|r| r.statistics.measured_ms)
         .sum::<f64>();
     if ms > 0. {
-        box_.append(&label(
+        technical.append(&label(
             &format!(
                 "{:.1} FPS · {:.1} s mesurées",
                 frames * 1000. / ms,
@@ -46,7 +51,7 @@ fn results(box_: &gtk::Box, result: &RunResult, path: Result<std::path::PathBuf,
             "gs-gpu-value",
         ));
     }
-    box_.append(&label(
+    technical.append(&label(
         &format!(
             "Variation : {} · moteur {}",
             result
@@ -58,7 +63,7 @@ fn results(box_: &gtk::Box, result: &RunResult, path: Result<std::path::PathBuf,
         "gs-section-title",
     ));
 
-    box_.append(&label(
+    technical.append(&label(
         &format!(
             "{} · rendu {} × {} · {} · Anticrénelage (MSAA) {}×",
             result.gpu_name,
@@ -69,7 +74,7 @@ fn results(box_: &gtk::Box, result: &RunResult, path: Result<std::path::PathBuf,
         ),
         "gs-card-detail",
     ));
-    box_.append(&label(
+    technical.append(&label(
         &format!(
             "Fenêtre de présentation : {} × {}",
             result.presentation_width, result.presentation_height
@@ -82,13 +87,13 @@ fn results(box_: &gtk::Box, result: &RunResult, path: Result<std::path::PathBuf,
         .as_ref()
         .and_then(|v| v["active_profile"]["name"].as_str())
     {
-        box_.append(&label(
+        technical.append(&label(
             &format!("Profil GPU observé avant mesure : {name}"),
             "gs-card-detail",
         ));
     }
     if let Some(average) = result.gpu_utilization.average_percent {
-        box_.append(&label(
+        technical.append(&label(
             &format!(
                 "Occupation globale du GPU : {average:.1} % en moyenne · pic {} % · {} relevés",
                 result.gpu_utilization.maximum_percent.unwrap_or(0),
@@ -96,9 +101,9 @@ fn results(box_: &gtk::Box, result: &RunResult, path: Result<std::path::PathBuf,
             ),
             "gs-section-title",
         ));
-        box_.append(&label("Ce capteur inclut les autres applications. Un jeu en parallèle empêche d’attribuer cette charge au seul benchmark.","gs-card-detail"));
+        technical.append(&label("Ce capteur inclut les autres applications. Un jeu en parallèle empêche d’attribuer cette charge au seul benchmark.","gs-card-detail"));
     } else {
-        box_.append(&label(
+        technical.append(&label(
             "Occupation GPU : indisponible sur ce capteur. La saturation n’est pas confirmée.",
             "gs-card-detail",
         ));
@@ -144,16 +149,16 @@ fn results(box_: &gtk::Box, result: &RunResult, path: Result<std::path::PathBuf,
             &format!("Préparation et soumission CPU : {cpu} · temps de calcul GPU : {gpu}"),
             "gs-card-detail",
         ));
-        box_.append(&card);
+        technical.append(&card);
     }
     if let Some(cv) = result.repetition_cv_percent {
-        box_.append(&label(
+        technical.append(&label(
             &format!("Variation entre les mesures : {cv:.2} % (coefficient de variation)"),
             "gs-card-detail",
         ));
     }
     if let Some(timing) = &result.duration {
-        box_.append(&label(
+        technical.append(&label(
             &format!(
                 "Profil {} · protocole {} · préparation identique avant chaque passage",
                 timing.profile.label(),
@@ -162,10 +167,10 @@ fn results(box_: &gtk::Box, result: &RunResult, path: Result<std::path::PathBuf,
             "gs-card-detail",
         ));
         if let (Some(min), Some(max)) = (timing.minimum_window_fps, timing.maximum_window_fps) {
-            box_.append(&label(&format!("FPS par fenêtres d’au moins 1 s : minimum {min:.1}, maximum {max:.1}. La dernière fenêtre partielle est exclue des extrema."),"gs-card-detail"));
+            technical.append(&label(&format!("FPS par fenêtres d’au moins 1 s : minimum {min:.1}, maximum {max:.1}. La dernière fenêtre partielle est exclue des extrema."),"gs-card-detail"));
         }
         for pass in &timing.passes {
-            box_.append(&label(
+            technical.append(&label(
                 &format!(
                     "Passage {} : préparation réelle {:.2} s · mesure réelle {:.2} s",
                     pass.repetition,
@@ -175,7 +180,7 @@ fn results(box_: &gtk::Box, result: &RunResult, path: Result<std::path::PathBuf,
                 "gs-card-detail",
             ));
         }
-        box_.append(&label("Les séries par seconde et les capteurs GPU disponibles sont conservés dans le JSON. Attente de présentation séparée : indisponible ; aucune durée GPU n’est déduite du travail CPU.","gs-card-detail"));
+        technical.append(&label("Les séries par seconde et les capteurs GPU disponibles sont conservés dans le JSON. Attente de présentation séparée : indisponible ; aucune durée GPU n’est déduite du travail CPU.","gs-card-detail"));
     }
     if let Some(first) = result.repetitions.first() {
         box_.append(&label("Temps par image · répétition 1", "gs-section-title"));
@@ -229,12 +234,12 @@ fn results(box_: &gtk::Box, result: &RunResult, path: Result<std::path::PathBuf,
         box_.append(&label("Affichage réduit par maximum de tranche pour conserver les pics. Chaque image calculée figure dans le CSV.","gs-card-detail"));
     }
     for warning in &result.warnings {
-        box_.append(&label(
+        technical.append(&label(
             &gameshift_bench::display_warning(warning),
             "gs-card-detail",
         ));
     }
-    box_.append(&crate::context_help::guide(&[
+    technical.append(&crate::context_help::guide(&[
         ("Images par seconde (FPS)", "Nombre moyen d’images calculées par seconde. Plus il est élevé, plus le rendu est rapide pour ce protocole. Il ne correspond pas nécessairement au nombre d’images affichées par l’écran."),
         ("Temps par image", crate::context_help::FRAME_TIME),
         ("P95, P99 et P99,9", "Durées sous lesquelles se trouvent respectivement 95 %, 99 % et 99,9 % des intervalles mesurés, selon le rang supérieur. Elles renseignent sur les images lentes ; plus elles sont faibles, mieux c’est. Les extrêmes demandent beaucoup d’images pour être représentatifs."),

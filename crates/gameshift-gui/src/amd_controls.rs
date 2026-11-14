@@ -138,69 +138,35 @@ fn spin(limits: Limits, current: i64, factor: f64) -> gtk::SpinButton {
     spin.set_valign(gtk::Align::Center);
     spin
 }
-fn draw_curve(
+pub(crate) fn draw_curve(
     area: &gtk::DrawingArea,
     points: Rc<RefCell<Vec<Point>>>,
     limits: Limits,
     pwm: Limits,
 ) {
     area.set_draw_func(move |widget, cr, w, h| {
-        let left = 40.;
-        let top = 15.;
-        let width = (w as f64 - left - 15.).max(1.);
-        let height = (h as f64 - top - 25.).max(1.);
-        let color = widget.color();
-        cr.set_source_rgba(
-            color.red() as f64,
-            color.green() as f64,
-            color.blue() as f64,
-            0.25,
-        );
-        cr.rectangle(left, top, width, height);
-        let _ = cr.stroke();
-        cr.set_source_rgba(
-            color.red() as f64,
-            color.green() as f64,
-            color.blue() as f64,
-            1.,
-        );
-        cr.set_font_size(11.);
-        cr.move_to(left, h as f64 - 5.);
-        let _ = cr.show_text(&format!(
-            "{}–{} °C (point chaud) · {}–{} % PWM",
-            limits.minimum, limits.maximum, pwm.minimum, pwm.maximum
-        ));
-        cr.set_source_rgb(0.15, 0.65, 0.57);
-        cr.set_line_width(2.);
-        let points = points.borrow();
-        for (i, p) in points.iter().enumerate() {
-            let x = left
-                + width * (p.temperature - limits.minimum) as f64
-                    / (limits.maximum - limits.minimum).max(1) as f64;
-            let y = top
-                + height
-                    * (1.
-                        - (p.pwm_percent - pwm.minimum) as f64
-                            / (pwm.maximum - pwm.minimum).max(1) as f64);
-            if i == 0 {
-                cr.move_to(x, y);
-            } else {
-                cr.line_to(x, y);
-            }
+        let left=38.; let top=12.;
+        let width=(w as f64-left-12.).max(1.); let height=(h as f64-top-28.).max(1.);
+        let color=widget.color();
+        let xy=|p:&Point| (left+width*(p.temperature-limits.minimum) as f64/(limits.maximum-limits.minimum).max(1) as f64, top+height*(1.-(p.pwm_percent-pwm.minimum) as f64/(pwm.maximum-pwm.minimum).max(1) as f64));
+        cr.set_source_rgba(color.red() as f64,color.green() as f64,color.blue() as f64,0.2);cr.set_line_width(1.);
+        for i in 0..=5 {let y=top+height*i as f64/5.; cr.move_to(left,y);cr.line_to(left+width,y);}
+        for i in 0..=5 {let x=left+width*i as f64/5.;cr.move_to(x,top);cr.line_to(x,top+height);}
+        let _=cr.stroke();
+        cr.set_source_rgba(color.red() as f64,color.green() as f64,color.blue() as f64,0.9);cr.set_font_size(10.);
+        for i in 0..=5 {cr.move_to(0.,top+height*i as f64/5.+3.);let _=cr.show_text(&format!("{:.0}%",pwm.maximum as f64-(pwm.maximum-pwm.minimum) as f64*i as f64/5.));}
+        for i in 0..=5 {let t=limits.minimum as f64+(limits.maximum-limits.minimum) as f64*i as f64/5.;let x=left+width*i as f64/5.;cr.move_to((x-12.).max(0.),h as f64-5.);let _=cr.show_text(&format!("{t:.0}°C"));}
+        let points=points.borrow();
+        if let (Some(first),Some(last))=(points.first(),points.last()) {
+            cr.move_to(xy(first).0,top+height);
+            for p in points.iter(){let (x,y)=xy(p);cr.line_to(x,y);}
+            cr.line_to(xy(last).0,top+height);cr.close_path();
+            let fill=gtk::cairo::LinearGradient::new(0.,top,0.,top+height);fill.add_color_stop_rgba(0.,0.02,0.89,0.84,0.35);fill.add_color_stop_rgba(1.,0.02,0.89,0.84,0.04);let _=cr.set_source(&fill);let _=cr.fill();
         }
-        let _ = cr.stroke();
-        for p in points.iter() {
-            let x = left
-                + width * (p.temperature - limits.minimum) as f64
-                    / (limits.maximum - limits.minimum).max(1) as f64;
-            let y = top
-                + height
-                    * (1.
-                        - (p.pwm_percent - pwm.minimum) as f64
-                            / (pwm.maximum - pwm.minimum).max(1) as f64);
-            cr.arc(x, y, 5., 0., std::f64::consts::TAU);
-            let _ = cr.fill();
-        }
+        cr.set_source_rgb(0.02,0.89,0.84);cr.set_line_width(2.);
+        for (i,p) in points.iter().enumerate(){let (x,y)=xy(p);if i==0 {cr.move_to(x,y);}else{cr.line_to(x,y);}}
+        let _=cr.stroke();
+        for p in points.iter(){let (x,y)=xy(p);cr.arc(x,y,3.5,0.,std::f64::consts::TAU);let _=cr.fill();}
     });
 }
 fn curve_editor(curve: &Curve, parent: &gtk::Box) -> Option<CurveEditor> {

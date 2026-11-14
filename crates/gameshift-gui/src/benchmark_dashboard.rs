@@ -153,12 +153,33 @@ pub fn telemetry(active: Rc<Cell<bool>>) -> gtk::Box {
                         text.push(format!("CPU {core} : {:.0} MHz", *freq as f64 / 1000.));
                     }
                 }
-                if let Ok(gpus) = gameshift_telemetry::gpus::discover() {
+                let inventory = gameshift_telemetry::inventory::current();
+                {
+                    let mut failed = !inventory.errors.is_empty();
+                    let gpus = inventory.gpus.clone();
                     for gpu in gpus {
                         let readings = if gpu.driver.as_deref() == Some("amdgpu") {
-                            gameshift_telemetry::device::DeviceSensors::discover(&gpu.pci).map(|d|d.read().into_iter().filter(|m|matches!(m.metric,gameshift_telemetry::device::Metric::Temperature|gameshift_telemetry::device::Metric::Power|gameshift_telemetry::device::Metric::CoreClock)).filter_map(|m|m.value.map(|v|format!("{} : {:.1} {:?}",m.label,v,m.unit))).collect::<Vec<_>>()).unwrap_or_default()
+                            let readings = inventory.read_device(&gpu.pci);
+                            failed |= readings.iter().any(|m| m.error.is_some());
+                            readings
+                                .into_iter()
+                                .filter(|m| {
+                                    matches!(
+                                        m.metric,
+                                        gameshift_telemetry::device::Metric::Temperature
+                                            | gameshift_telemetry::device::Metric::Power
+                                            | gameshift_telemetry::device::Metric::CoreClock
+                                    )
+                                })
+                                .filter_map(|m| {
+                                    m.value
+                                        .map(|v| format!("{} : {:.1} {:?}", m.label, v, m.unit))
+                                })
+                                .collect::<Vec<_>>()
                         } else {
-                            gameshift_telemetry::gpus::generic_sensors(&gpu)
+                            let readings = inventory.generic_sensors(&gpu.pci);
+                            failed |= readings.len() < inventory.generic_sensor_count(&gpu.pci);
+                            readings
                                 .into_iter()
                                 .map(|m| format!("{} : {:.1} {}", m.label, m.value, m.unit))
                                 .collect()
@@ -167,6 +188,7 @@ pub fn telemetry(active: Rc<Cell<bool>>) -> gtk::Box {
                             text.push(format!("{} · {}", gpu.name, readings.join(" · ")));
                         }
                     }
+                    gameshift_telemetry::inventory::failed(failed);
                 }
                 if text.is_empty() {
                     text.push("Températures, puissances et fréquences : indisponibles sur les interfaces accessibles.".into());

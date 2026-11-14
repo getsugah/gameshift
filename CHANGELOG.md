@@ -1,5 +1,14 @@
 # Journal des changements
 
+## 2026-11-14 — Distribution alpha.2 actualisée
+
+- Accueil adaptatif, navigation par espaces et présentation Aurelia harmonisée avec la maquette ; cartes des résultats et accents matériels.
+- Monitoring enrichi : découverte des capteurs, ventilation, moteurs GPU et relevés CPU RAPL selon les interfaces disponibles.
+- Aurelia système : protocole de stockage v3 et points dérivés des débits, avec conservation des mesures et des historiques existants.
+- Livraison publique datée, sources sélectionnées et binaires reconstruits avec remappage des chemins de compilation. Anciennes AppImages et publications conservées.
+- Les vérifications logicielles ne remplacent pas la validation graphique et matérielle sur les différentes distributions.
+
+
 ## 2026-11-07 — Alpha 0.5.0-alpha.2
 
 - Menu de notification : ajout de « Quitter GameShift » pour fermer l’interface et arrêter proprement l’agent, avec restauration habituelle des réglages et conservation des profils.

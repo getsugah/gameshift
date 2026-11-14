@@ -5,6 +5,7 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
+gameshift-core.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 libc = "0.2"
